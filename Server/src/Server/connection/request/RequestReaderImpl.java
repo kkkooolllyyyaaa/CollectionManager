@@ -10,14 +10,8 @@ import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-public class RequestReaderImpl implements RequestReader, Runnable {
+public class RequestReaderImpl implements RequestReader {
     private SocketChannel socketChannel;
-    private Request request;
-
-    @Override
-    public void run() {
-
-    }
 
     @Override
     public Request readRequest(SocketChannel socketChannel) throws IOException, ClassNotFoundException {
@@ -44,10 +38,6 @@ public class RequestReaderImpl implements RequestReader, Runnable {
         stream = new ObjectInputStream(inputStream);
         Request request = (Request) stream.readObject();
         stream.close();
-        return request;
-    }
-
-    public Request getRequest() {
         return request;
     }
 }

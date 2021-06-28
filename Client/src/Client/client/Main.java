@@ -26,6 +26,7 @@ public class Main {
                         authorizer,
                         Integer.parseInt(args[0])
                 );
+                System.out.println("The work is started:\nEnter 'client_help' for help");
                 client.start(Integer.parseInt(args[0]));
             } catch (NumberFormatException e) {
                 System.out.println(e.getMessage());

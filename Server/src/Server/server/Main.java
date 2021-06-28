@@ -45,9 +45,6 @@ public class Main {
                         commandReader,
                         connectionManager,
                         responseCreator,
-                        requestReader,
-                        responseSender,
-                        requestHandler,
                         new ThreadProcessorImpl(requestReader, requestHandler, responseSender),
                         Integer.parseInt(args[0]));
 

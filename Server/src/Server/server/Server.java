@@ -4,10 +4,7 @@ package Server.server;
 import Server.collection.CollectionManager;
 import Server.commands.*;
 import Server.connection.ServerConnectionManager;
-import Server.connection.request.RequestHandler;
-import Server.connection.request.RequestReader;
 import Server.connection.response.ResponseCreator;
-import Server.connection.response.ResponseSender;
 import Server.fileWorker.StudyGroupWriter;
 import Server.server.runnable.ThreadProcessor;
 import exceptions.CommandIsNotExistException;
@@ -24,9 +21,6 @@ public class Server implements ServerApp, IOimpl {
     private final ServerCommandReader commandReader;
     private final ServerConnectionManager connectionManager;
     private final ResponseCreator responseCreator;
-    private final RequestReader requestReader;
-    private final ResponseSender responseSender;
-    private final RequestHandler requestHandler;
     private final ThreadProcessor threadProcessor;
     private final int port;
     private boolean isRunning = true;
@@ -37,9 +31,6 @@ public class Server implements ServerApp, IOimpl {
                   ServerCommandReader commandReader,
                   ServerConnectionManager connectionManager,
                   ResponseCreator responseCreator,
-                  RequestReader requestReader,
-                  ResponseSender responseSender,
-                  RequestHandler requestHandler,
                   ThreadProcessor threadProcessor,
                   int port) {
         this.writer = writer;
@@ -47,9 +38,6 @@ public class Server implements ServerApp, IOimpl {
         this.commandReader = commandReader;
         this.connectionManager = connectionManager;
         this.responseCreator = responseCreator;
-        this.requestReader = requestReader;
-        this.responseSender = responseSender;
-        this.requestHandler = requestHandler;
         this.threadProcessor = threadProcessor;
         this.port = port;
     }
@@ -61,7 +49,6 @@ public class Server implements ServerApp, IOimpl {
     @Override
     public void start() {
         prepareToStart();
-        startConsoleDaemon(commandReader);
         run();
     }
 
@@ -72,9 +59,8 @@ public class Server implements ServerApp, IOimpl {
                 SocketChannel socketChannel = serverSocketChannel.accept();
                 if (socketChannel != null)
                     threadProcessor.run(socketChannel);
-
             } catch (IOException e) {
-                e.printStackTrace();
+                println("Работа Сервера будет прекращена");
                 exit();
             }
         }
@@ -156,5 +142,6 @@ public class Server implements ServerApp, IOimpl {
     private void prepareToStart() {
         addServerCommands();
         addCommands();
+        startConsoleDaemon(commandReader);
     }
 }

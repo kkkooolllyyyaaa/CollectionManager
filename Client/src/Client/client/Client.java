@@ -55,22 +55,11 @@ public class Client implements ClientApp, IOimpl {
      */
     @Override
     public void start(int port) {
-        try {
-            println("The work is started:");
-            commandReader.executeCommand("client_help", null);
-        } catch (CommandIsNotExistException e) {
-            e.printStackTrace();
-        }
         while (isRunning) {
             String inputString = "";
             try {
                 inputString = readLine().trim();
                 commandReader.executeCommand(inputString, null);
-            } catch (NoSuchElementException | NullPointerException e) {
-                errPrint("You can't input this\nThe work of Client will be stopped");
-                return;
-            } catch (IOException e) {
-                errPrint(e.getMessage());
             } catch (CommandIsNotExistException e) {
                 try {
                     Response response = communicateWithServer(inputString);
@@ -82,6 +71,12 @@ public class Client implements ClientApp, IOimpl {
                 } catch (IOException | ClassNotFoundException ioException) {
                     ioException.printStackTrace();
                 }
+            } catch (NoSuchElementException | NullPointerException e) {
+                errPrint("You can't input this\nThe work of Client will be stopped");
+                return;
+            } catch (IOException e) {
+                errPrint(e.getMessage());
+                return;
             }
         }
     }
@@ -109,7 +104,6 @@ public class Client implements ClientApp, IOimpl {
             socketChannel = connectionManager.openConnection(port);
         } catch (ConnectException e) {
             println("Server is unavailable");
-            exit();
             return null;
         }
         Request request = requestSender.createBasicRequest(commandAndArgument[0]);
@@ -152,11 +146,11 @@ public class Client implements ClientApp, IOimpl {
         request.setArg(arg);
         request.setUser(getCurrentUser());
         requestSender.sendRequest(socketChannel, request);
-        Response response = null;
+        Response response;
         try {
             response = responseReader.readResponse(socketChannel);
         } catch (StreamCorruptedException e) {
-            return response;
+            return null;
         } catch (BufferOverflowException e) {
             response = new Response();
             response.setMessage("Server data is too big for buffer");
