@@ -4,8 +4,11 @@ package Server.server;
 import Server.collection.CollectionManager;
 import Server.commands.*;
 import Server.connection.ServerConnectionManager;
+import Server.connection.request.RequestHandler;
+import Server.connection.request.RequestReader;
 import Server.connection.response.ResponseCreator;
-import Server.server.runnable.ThreadProcessor;
+import Server.connection.response.ResponseSender;
+import Server.server.runnable.ThreadProcessorImpl;
 import exceptions.CommandIsNotExistException;
 import general.IOImpl;
 
@@ -19,7 +22,9 @@ public class Server implements ServerApp, IOImpl {
     private final ServerCommandReader commandReader;
     private final ServerConnectionManager connectionManager;
     private final ResponseCreator responseCreator;
-    private final ThreadProcessor threadProcessor;
+    private final RequestReader requestReader;
+    private final RequestHandler requestHandler;
+    private final ResponseSender responseSender;
     private final int port;
     private boolean isRunning = true;
 
@@ -28,13 +33,17 @@ public class Server implements ServerApp, IOImpl {
                   ServerCommandReader commandReader,
                   ServerConnectionManager connectionManager,
                   ResponseCreator responseCreator,
-                  ThreadProcessor threadProcessor,
+                  RequestReader requestReader,
+                  RequestHandler requestHandler,
+                  ResponseSender responseSender,
                   int port) {
         this.collectionManager = collectionManager;
         this.commandReader = commandReader;
         this.connectionManager = connectionManager;
         this.responseCreator = responseCreator;
-        this.threadProcessor = threadProcessor;
+        this.requestReader = requestReader;
+        this.requestHandler = requestHandler;
+        this.responseSender = responseSender;
         this.port = port;
     }
 
@@ -54,7 +63,8 @@ public class Server implements ServerApp, IOImpl {
             try {
                 SocketChannel socketChannel = serverSocketChannel.accept();
                 if (socketChannel != null) {
-                    threadProcessor.run(socketChannel);
+                    ThreadProcessorImpl threadProcessor = new ThreadProcessorImpl(requestReader, requestHandler, responseSender, socketChannel);
+                    new Thread(threadProcessor).start();
                 }
             } catch (IOException e) {
                 println("Работа Сервера будет прекращена");
@@ -70,7 +80,6 @@ public class Server implements ServerApp, IOImpl {
     @Override
     public void exit() {
         isRunning = false;
-        threadProcessor.shutDownExecutorServices();
         System.exit(0);
     }
 

@@ -10,21 +10,28 @@ import general.Response;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.*;
 
-public class ThreadProcessorImpl implements ThreadProcessor, IOImpl {
+public class ThreadProcessorImpl implements ThreadProcessor, IOImpl, Runnable {
     private final RequestReader requestReader;
     private final RequestHandler requestHandler;
     private final ResponseSender responseSender;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final SocketChannel socketChannel;
 
-    public ThreadProcessorImpl(RequestReader requestReader, RequestHandler requestHandler, ResponseSender responseSender) {
+    public ThreadProcessorImpl(RequestReader requestReader, RequestHandler requestHandler, ResponseSender responseSender, SocketChannel socketChannel) {
         this.requestReader = requestReader;
         this.requestHandler = requestHandler;
         this.responseSender = responseSender;
+        this.socketChannel = socketChannel;
 
     }
 
     @Override
-    public void run(SocketChannel socketChannel) {
+    public void run() {
+        process();
+    }
+
+    @Override
+    public void process() {
         try {
             Callable<Request> callable1 = new ReadThread(socketChannel, requestReader);
             FutureTask<Request> futureTask1 = new FutureTask<>(callable1);

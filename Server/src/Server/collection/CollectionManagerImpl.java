@@ -150,15 +150,14 @@ public final class CollectionManagerImpl extends AbstractCollectionManager {
     @Override
     public void addElement(ServerStudyGroup studyGroup) {
         try {
-            //
             locker.lock();
             dataBase.insertStudyGroup(studyGroup);
             studyGroups.add(studyGroup);
             newUser(studyGroup.getUsername());
-            //
-            locker.unlock();
         } catch (Exception e) {
             responseCreator.addToMsg(e.getMessage());
+        } finally {
+            locker.unlock();
         }
     }
 
@@ -172,7 +171,6 @@ public final class CollectionManagerImpl extends AbstractCollectionManager {
             if (sg.getId() == id) {
                 if (isOwner(id, studyGroup.getUsername())) {
                     try {
-                        //
                         locker.lock();
                         dataBase.updateStudyGroup(id, studyGroup);
                         sg.setName(studyGroup.getName());
@@ -182,11 +180,11 @@ public final class CollectionManagerImpl extends AbstractCollectionManager {
                         sg.setStudentsCount(studyGroup.getStudentsCount());
                         sg.setSemesterEnum(studyGroup.getSemesterEnum());
                         responseCreator.addToMsg("Element is updated!");
-                        //
-                        locker.unlock();
                         return;
                     } catch (SQLNoDataException e) {
                         responseCreator.addToMsg("Invalid field");
+                    } finally {
+                        locker.lock();
                     }
                 }
             }

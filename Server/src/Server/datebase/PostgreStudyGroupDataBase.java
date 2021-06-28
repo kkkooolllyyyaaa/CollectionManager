@@ -7,10 +7,7 @@ import exceptions.SQLNoDataException;
 import general.User;
 import validation.StudyGroupBuilder;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.ZonedDateTime;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -182,7 +179,6 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
         DataBaseConnector dataBaseConnector = new DataBaseConnector();
         dataBaseConnector.connect();
         return dataBaseConnector.getCon();
-//        return DataBaseConnector.getCon();
 //        return DriverManager.getConnection(URL, login, password);
     }
 }
