@@ -20,8 +20,8 @@ public enum Semester implements Serializable {
 
     public static void printValues() {
         System.out.println("List of SEMESTER enum values:");
-        for (Semester smstr : Semester.values()) {
-            System.out.println(smstr.getUrl());
+        for (Semester semester : Semester.values()) {
+            System.out.println(semester.getUrl());
         }
     }
 

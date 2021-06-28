@@ -14,11 +14,10 @@ import Server.connection.response.ResponseSender;
 import Server.connection.response.ResponseSenderImpl;
 import Server.datebase.PostgreStudyGroupDataBase;
 import Server.datebase.PostgreUserDataBase;
-import Server.fileWorker.CSVStudyGroupWriter;
 import Server.server.runnable.ThreadProcessorImpl;
 import Server.user_manager.UserManager;
 import Server.user_manager.UserManagerImpl;
-import general.IOimpl;
+import general.IOImpl;
 import validation.StudyGroupBuilder;
 import validation.StudyGroupBuilderImpl;
 import validation.StudyGroupValidatorImpl;
@@ -28,19 +27,17 @@ public class Main {
         if (args.length == 1) {
             try {
                 ResponseCreator responseCreator = new ResponseCreatorImpl();
-                StudyGroupBuilder builder = new StudyGroupBuilderImpl(IOimpl.reader, false, new StudyGroupValidatorImpl());
+                StudyGroupBuilder builder = new StudyGroupBuilderImpl(IOImpl.reader, false, new StudyGroupValidatorImpl());
                 PostgreStudyGroupDataBase postgreStudyGroupDataBase = new PostgreStudyGroupDataBase(builder);
                 PostgreUserDataBase userDataBase = new PostgreUserDataBase();
                 UserManager userManager = new UserManagerImpl(userDataBase);
                 CollectionManagerImpl collectionManager = new CollectionManagerImpl(responseCreator, postgreStudyGroupDataBase);
-                CSVStudyGroupWriter writer = new CSVStudyGroupWriter(collectionManager);
                 ServerCommandReaderImpl commandReader = new ServerCommandReaderImpl();
                 ServerConnectionManagerImpl connectionManager = new ServerConnectionManagerImpl();
                 RequestReader requestReader = new RequestReaderImpl();
                 ResponseSender responseSender = new ResponseSenderImpl();
                 RequestHandler requestHandler = new RequestHandlerImpl(userManager, commandReader, collectionManager, responseCreator);
                 ServerApp server = new Server(
-                        writer,
                         collectionManager,
                         commandReader,
                         connectionManager,

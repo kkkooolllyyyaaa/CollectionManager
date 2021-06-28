@@ -19,7 +19,7 @@ public interface StudyGroupDataBase {
 
     boolean deleteStudyGroupById(long id);
 
-    boolean updateStudyGroup(long id, ServerStudyGroup studyGroup) throws SQLNoDataException;
+    void updateStudyGroup(long id, ServerStudyGroup studyGroup) throws SQLNoDataException;
 
     CopyOnWriteArrayList<ServerStudyGroup> getAll() throws SQLNoDataException;
 }

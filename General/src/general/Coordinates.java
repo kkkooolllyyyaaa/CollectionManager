@@ -7,11 +7,6 @@ public class Coordinates implements Serializable {
     private int x; //Значение поля должно быть больше -393
     private Long y; //Значение поля должно быть больше -741, Поле не может быть null
 
-    public Coordinates(int x, Long y) {
-        this.x = x;
-        this.y = y;
-    }
-
     public Coordinates() {
     }
 

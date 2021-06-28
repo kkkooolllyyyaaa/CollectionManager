@@ -93,7 +93,7 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
     }
 
     @Override
-    public boolean updateStudyGroup(long id, ServerStudyGroup studyGroup) throws SQLNoDataException {
+    public void updateStudyGroup(long id, ServerStudyGroup studyGroup) throws SQLNoDataException {
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement("UPDATE studygroups SET " +
                      "name = ?," +
@@ -114,7 +114,6 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
             initStatement(statement, studyGroup);
             statement.setLong(15, id);
             statement.execute();
-            return true;
         } catch (SQLException e) {
             throw new SQLNoDataException();
         }

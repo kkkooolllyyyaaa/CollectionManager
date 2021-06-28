@@ -33,10 +33,7 @@ public class User implements Serializable {
         if (!(obj instanceof User))
             return false;
         User user = (User) obj;
-        if (user.getUserName().equals(this.userName))
-            return true;
-        else
-            return false;
+        return user.getUserName().equals(this.userName);
     }
 
     @Override

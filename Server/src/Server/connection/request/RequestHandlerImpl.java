@@ -39,7 +39,7 @@ public class RequestHandlerImpl implements RequestHandler {
             if (request.getRequestType().equals(RequestType.EXECUTE_COMMAND)) {
                 response = handleExecuteRequest(request);
             } else if (request.getRequestType().equals(RequestType.ERROR_TYPE_REQUEST)) {
-                response = handleErrorTypeRequest(request);
+                response = handleErrorTypeRequest();
             } else if (request.getRequestType() == RequestType.REGISTRATION_REQUEST) {
                 response = handleRegisterRequest(request);
             } else if (request.getRequestType() == RequestType.AUTHORIZATION_REQUEST) {
@@ -123,7 +123,7 @@ public class RequestHandlerImpl implements RequestHandler {
         return response;
     }
 
-    private Response handleErrorTypeRequest(Request request) {
+    private Response handleErrorTypeRequest() {
         return new Response(ResponseType.ERROR_RESPONSE, "Your message is too big");
     }
 }

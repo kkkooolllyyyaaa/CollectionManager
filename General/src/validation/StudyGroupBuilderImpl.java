@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
  * Класс, обеспечивающий ввод элементов StudyGroups
  * Обеспечивает валидность вводимых полей
  */
-public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOimpl {
+public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     private final boolean isScript;
     private final StudyGroupValidator validator;

@@ -1,8 +1,6 @@
 package Client.authorizer;
 
 
-import general.User;
-
 import java.io.IOException;
 
 public interface ClientAuthorizer {
@@ -10,5 +8,4 @@ public interface ClientAuthorizer {
 
     void authorizeUser() throws IOException;
 
-    User getUser();
 }

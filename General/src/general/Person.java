@@ -8,12 +8,6 @@ public class Person implements Serializable {
     private String passportID; //Поле не может быть null
     private Location location; //Поле может быть null
 
-    public Person(String name, String passportID, Location location) {
-        this.name = name;
-        this.passportID = passportID;
-        this.location = location;
-    }
-
     public Person() {
     }
 

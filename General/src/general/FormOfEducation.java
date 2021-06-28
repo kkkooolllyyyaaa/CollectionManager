@@ -8,7 +8,7 @@ public enum FormOfEducation implements Serializable {
     EVENING_CLASSES("EVENING_CLASSES");
     private static final long serialVersionUID = 25236L;
 
-    private String url;
+    private final String url;
 
     FormOfEducation(String url) {
         this.url = url;

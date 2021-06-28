@@ -6,7 +6,7 @@ public class Request implements Serializable {
 
     private final static long serialVersionUID = -14567L;
 
-    private RequestType requestType;
+    private final RequestType requestType;
 
     private String commandName;
 
@@ -31,16 +31,9 @@ public class Request implements Serializable {
         return requestType;
     }
 
-    public void setRequestType(RequestType requestType) {
-        this.requestType = requestType;
-    }
 
     public String getCommandName() {
         return commandName;
-    }
-
-    public void setCommandName(String commandName) {
-        this.commandName = commandName;
     }
 
     public String getArg() {

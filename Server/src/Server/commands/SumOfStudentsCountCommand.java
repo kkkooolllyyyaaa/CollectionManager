@@ -1,8 +1,8 @@
 package Server.commands;
 
 import Server.collection.CollectionManager;
-import general.*;
-import exceptions.*;
+import general.AbstractCommand;
+
 public class SumOfStudentsCountCommand extends AbstractCommand {
     private final CollectionManager collectionManager;
 

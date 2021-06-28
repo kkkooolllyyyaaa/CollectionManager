@@ -11,7 +11,7 @@ import general.*;
 import java.io.IOException;
 import java.net.ConnectException;
 
-public class ClientAuthorizerImpl implements ClientAuthorizer, IOimpl {
+public class ClientAuthorizerImpl implements ClientAuthorizer, IOImpl {
     private final ClientConnectionManager connectionManager;
     private final RequestSender requestSender;
     private final ResponseReader responseReader;
@@ -88,9 +88,5 @@ public class ClientAuthorizerImpl implements ClientAuthorizer, IOimpl {
                 exceptionString = exceptionString + "The userName must be at least 4 and at max 30 characters long\n";
             throw new BadPasswordException(exceptionString);
         }
-    }
-
-    public User getUser() {
-        return user;
     }
 }

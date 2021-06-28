@@ -5,7 +5,7 @@ import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public interface IOimpl {
+public interface IOImpl {
     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     default String readLine() throws IOException {
@@ -22,10 +22,6 @@ public interface IOimpl {
 
     default void println(String str) {
         System.out.println(str);
-    }
-
-    default void print(String str) {
-        System.out.print(str);
     }
 
     default void errPrint(String str) {

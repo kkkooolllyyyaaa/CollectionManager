@@ -12,7 +12,7 @@ public class SHA384Coder {
     private final static String encryptAlg = "SHA-384";
 
     /**
-     * @param password password that we want to ecnrypt
+     * @param password password that we want to encrypt
      * @return encrypted password
      */
     public static String encryptPassword(String password) {
@@ -20,11 +20,11 @@ public class SHA384Coder {
             MessageDigest md = MessageDigest.getInstance(encryptAlg);
             byte[] messageDigest = md.digest(password.getBytes());
             BigInteger no = new BigInteger(1, messageDigest);
-            String hashtext = no.toString(16);
-            while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
+            String hashText = no.toString(16);
+            while (hashText.length() < 32) {
+                hashText = "0" + hashText;
             }
-            return hashtext;
+            return hashText;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("No such algorithm");
         }

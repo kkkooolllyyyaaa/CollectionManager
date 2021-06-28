@@ -19,7 +19,7 @@ import java.nio.channels.SocketChannel;
 import java.util.NoSuchElementException;
 
 
-public class Client implements ClientApp, IOimpl {
+public class Client implements ClientApp, IOImpl {
     private final ClientCommandReaderImpl commandReader;
     private final ClientConnectionManager connectionManager;
     private final RequestSender requestSender;

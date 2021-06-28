@@ -4,7 +4,7 @@ import general.Request;
 import general.RequestType;
 import general.StudyGroup;
 
-public interface RequsetCreator {
+public interface RequestCreator {
     default Request createBasicRequest(String userString) {
         userString = userString.trim();
         return new Request(RequestType.COMMAND_REQUEST, userString, null);

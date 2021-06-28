@@ -4,13 +4,13 @@ import Client.client.Client;
 import exceptions.CommandIsNotExistException;
 import exceptions.ScriptException;
 import general.AbstractCommand;
-import general.IOimpl;
+import general.IOImpl;
 import general.Response;
 
 import java.io.*;
 import java.util.HashSet;
 
-public class ExecuteScriptCommand extends AbstractCommand implements IOimpl {
+public class ExecuteScriptCommand extends AbstractCommand implements IOImpl {
     ClientCommandReaderImpl commandReader;
     Client client;
     String fileName;
@@ -25,7 +25,7 @@ public class ExecuteScriptCommand extends AbstractCommand implements IOimpl {
 
 
     @Override
-    public void execute(String args[]) {
+    public void execute(String[] args) {
         if (args.length > 1) {
             fileName = args[1];
         } else {
@@ -50,7 +50,7 @@ public class ExecuteScriptCommand extends AbstractCommand implements IOimpl {
                             continue;
                         Response response = client.communicateWithServer(commands);
                         println(response.getMessage());
-                    } catch (EOFException eofe) {
+                    } catch (EOFException e1) {
                         errPrint("too many bytes");
                     } catch (IOException | ClassNotFoundException ioe) {
                         errPrint(ioe.getMessage());

@@ -5,18 +5,16 @@ import Server.collection.CollectionManager;
 import Server.commands.*;
 import Server.connection.ServerConnectionManager;
 import Server.connection.response.ResponseCreator;
-import Server.fileWorker.StudyGroupWriter;
 import Server.server.runnable.ThreadProcessor;
 import exceptions.CommandIsNotExistException;
-import general.IOimpl;
+import general.IOImpl;
 
 import java.io.IOException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.NoSuchElementException;
 
-public class Server implements ServerApp, IOimpl {
-    private final StudyGroupWriter writer;
+public class Server implements ServerApp, IOImpl {
     private final CollectionManager collectionManager;
     private final ServerCommandReader commandReader;
     private final ServerConnectionManager connectionManager;
@@ -26,14 +24,12 @@ public class Server implements ServerApp, IOimpl {
     private boolean isRunning = true;
 
 
-    public Server(StudyGroupWriter writer,
-                  CollectionManager collectionManager,
+    public Server(CollectionManager collectionManager,
                   ServerCommandReader commandReader,
                   ServerConnectionManager connectionManager,
                   ResponseCreator responseCreator,
                   ThreadProcessor threadProcessor,
                   int port) {
-        this.writer = writer;
         this.collectionManager = collectionManager;
         this.commandReader = commandReader;
         this.connectionManager = connectionManager;
@@ -84,7 +80,7 @@ public class Server implements ServerApp, IOimpl {
      */
     private void startConsoleDaemon(ServerCommandReader commandReader) {
         Thread consoleThread = new Thread(() -> {
-            IOimpl userIO = new IOimpl() {
+            IOImpl userIO = new IOImpl() {
             };
             while (!Thread.interrupted()) {
                 try {
@@ -129,7 +125,6 @@ public class Server implements ServerApp, IOimpl {
      * Добавляет все серверные команды
      */
     private void addServerCommands() {
-        commandReader.addServerCommand("save", new SaveCommand(collectionManager, writer));
         commandReader.addServerCommand("exit", new ExitCommand(this));
     }
 

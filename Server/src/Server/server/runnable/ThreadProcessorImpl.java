@@ -3,14 +3,14 @@ package Server.server.runnable;
 import Server.connection.request.RequestHandler;
 import Server.connection.request.RequestReader;
 import Server.connection.response.ResponseSender;
-import general.IOimpl;
+import general.IOImpl;
 import general.Request;
 import general.Response;
 
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.*;
 
-public class ThreadProcessorImpl implements ThreadProcessor, IOimpl {
+public class ThreadProcessorImpl implements ThreadProcessor, IOImpl {
     private final RequestReader requestReader;
     private final RequestHandler requestHandler;
     private final ResponseSender responseSender;

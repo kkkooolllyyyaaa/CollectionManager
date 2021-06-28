@@ -21,7 +21,6 @@ public class PrintAscendingCommand extends AbstractCommand {
     public void execute(String[] args) {
         StringBuilder sb = new StringBuilder("Элементов в коллекции: " + collectionManager.getStudyGroups().size()).append("\n");
         collectionManager.getStudyGroups()
-                .stream()
                 .forEach(x -> sb.append(StudyGroupShower.toStrView(x)));
         responseCreator.addToMsg(sb.toString());
     }

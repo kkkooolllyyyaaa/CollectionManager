@@ -1,7 +1,8 @@
 package Server.commands;
 
 import Server.connection.response.ResponseCreator;
-import general.*;
+import general.AbstractCommand;
+import general.LimitedQueue;
 
 public class HistoryCommand extends AbstractCommand {
     private final ServerCommandReader serverCommandReader;
@@ -16,10 +17,10 @@ public class HistoryCommand extends AbstractCommand {
     @Override
     public void execute(String[] args) {
         LimitedQueue<String> history = serverCommandReader.getHistory();
-        char g = '5';
+        char lowThan5 = '5';
         if (history.size() < 5)
-            g = (char) history.size();
-        responseCreator.addToMsg("The list of last 5 commands:");
+            lowThan5 = (char) history.size();
+        responseCreator.addToMsg("The list of last " + lowThan5 + "commands:");
         for (Object hstr : history)
             responseCreator.addToMsg(((String) hstr).trim());
     }

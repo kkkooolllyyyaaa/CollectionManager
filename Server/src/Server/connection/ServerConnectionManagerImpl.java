@@ -22,14 +22,4 @@ public class ServerConnectionManagerImpl implements ServerConnectionManager {
         }
     }
 
-    @Override
-    public void closeConnection() {
-        try {
-            serverSocketChannel.socket().close();
-            serverSocketChannel.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
-
 }
