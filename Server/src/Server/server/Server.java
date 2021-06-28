@@ -53,8 +53,9 @@ public class Server implements ServerApp, IOImpl {
         while (isRunning) {
             try {
                 SocketChannel socketChannel = serverSocketChannel.accept();
-                if (socketChannel != null)
+                if (socketChannel != null) {
                     threadProcessor.run(socketChannel);
+                }
             } catch (IOException e) {
                 println("Работа Сервера будет прекращена");
                 exit();
@@ -70,6 +71,7 @@ public class Server implements ServerApp, IOImpl {
     public void exit() {
         isRunning = false;
         threadProcessor.shutDownExecutorServices();
+        System.exit(0);
     }
 
     /**

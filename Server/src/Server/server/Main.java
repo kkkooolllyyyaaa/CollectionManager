@@ -12,6 +12,7 @@ import Server.connection.response.ResponseCreator;
 import Server.connection.response.ResponseCreatorImpl;
 import Server.connection.response.ResponseSender;
 import Server.connection.response.ResponseSenderImpl;
+import Server.datebase.DataBaseConnector;
 import Server.datebase.PostgreStudyGroupDataBase;
 import Server.datebase.PostgreUserDataBase;
 import Server.server.runnable.ThreadProcessorImpl;
@@ -26,6 +27,8 @@ public class Main {
     public static void main(String[] args) {
         if (args.length == 1) {
             try {
+                DataBaseConnector dataBaseConnector = new DataBaseConnector();
+                dataBaseConnector.connect();
                 ResponseCreator responseCreator = new ResponseCreatorImpl();
                 StudyGroupBuilder builder = new StudyGroupBuilderImpl(IOImpl.reader, false, new StudyGroupValidatorImpl());
                 PostgreStudyGroupDataBase postgreStudyGroupDataBase = new PostgreStudyGroupDataBase(builder);

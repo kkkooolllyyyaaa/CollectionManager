@@ -28,7 +28,7 @@ public class ThreadProcessorImpl implements ThreadProcessor, IOImpl {
         try {
             Callable<Request> callable1 = new ReadThread(socketChannel, requestReader);
             FutureTask<Request> futureTask1 = new FutureTask<>(callable1);
-            println("Reading request..." + Thread.currentThread().getName());
+            println("Reading request...");
             Thread readThread = new Thread(futureTask1);
             readThread.start();
             Request request = futureTask1.get();
@@ -36,11 +36,11 @@ public class ThreadProcessorImpl implements ThreadProcessor, IOImpl {
 
             Callable<Response> callable2 = new HandleThread(requestHandler, request);
             FutureTask<Response> futureTask2 = new FutureTask<>(callable2);
-            println("Handling request..." + Thread.currentThread().getName());
+            println("Handling request...");
             executorService.submit(futureTask2);
             Response response = futureTask2.get();
 
-            println("Sending response..." + Thread.currentThread().getName() + "\n");
+            println("Sending response...\n");
             new Thread(new SendThread(responseSender, socketChannel, response)).start();
 
         } catch (InterruptedException | ExecutionException e) {

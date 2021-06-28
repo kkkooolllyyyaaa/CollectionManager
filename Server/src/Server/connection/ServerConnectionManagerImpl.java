@@ -12,6 +12,7 @@ public class ServerConnectionManagerImpl implements ServerConnectionManager {
     public ServerSocketChannel openConnection(int port) {
         try {
             serverSocketChannel = ServerSocketChannel.open();
+//            serverSocketChannel.bind(new InetSocketAddress(port));
             serverSocketChannel.bind(new InetSocketAddress("localhost", port));
             serverSocketChannel.configureBlocking(false);
             return serverSocketChannel;

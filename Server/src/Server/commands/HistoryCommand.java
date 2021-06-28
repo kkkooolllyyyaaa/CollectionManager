@@ -17,10 +17,7 @@ public class HistoryCommand extends AbstractCommand {
     @Override
     public void execute(String[] args) {
         LimitedQueue<String> history = serverCommandReader.getHistory();
-        char lowThan5 = '5';
-        if (history.size() < 5)
-            lowThan5 = (char) history.size();
-        responseCreator.addToMsg("The list of last " + lowThan5 + "commands:");
+        responseCreator.addToMsg("The list of last 5 commands:");
         for (Object hstr : history)
             responseCreator.addToMsg(((String) hstr).trim());
     }

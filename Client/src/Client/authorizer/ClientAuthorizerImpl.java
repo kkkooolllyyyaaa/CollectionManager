@@ -31,7 +31,7 @@ public class ClientAuthorizerImpl implements ClientAuthorizer, IOImpl {
             inputRegistrationData();
             user = new User(userName, password);
             Request request = new Request(RequestType.REGISTRATION_REQUEST, user);
-            connectionManager.openConnection(8080);
+            connectionManager.openConnection(1777);
             requestSender.sendRequest(connectionManager.getSocketChannel(), request);
             Response response = responseReader.readResponse(connectionManager.getSocketChannel());
             println(response.getMessage());
@@ -53,7 +53,7 @@ public class ClientAuthorizerImpl implements ClientAuthorizer, IOImpl {
             user = new User(userName, password);
             Client.setCurrentUser(user);
             Request request = new Request(RequestType.AUTHORIZATION_REQUEST, user);
-            connectionManager.openConnection(8080);
+            connectionManager.openConnection(1777);
             requestSender.sendRequest(connectionManager.getSocketChannel(), request);
             Response response = responseReader.readResponse(connectionManager.getSocketChannel());
             if (!response.getResponseType().equals(ResponseType.ERROR_RESPONSE)) {

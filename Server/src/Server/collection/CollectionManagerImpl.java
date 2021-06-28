@@ -38,8 +38,7 @@ public final class CollectionManagerImpl extends AbstractCollectionManager {
         try {
             studyGroups.addAll(dataBase.getAll());
             initOwners();
-        } catch (SQLNoDataException notExcepted) {
-            notExcepted.printStackTrace();
+        } catch (SQLNoDataException ignored) {
         }
     }
 

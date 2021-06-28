@@ -7,7 +7,10 @@ import exceptions.SQLNoDataException;
 import general.User;
 import validation.StudyGroupBuilder;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -134,9 +137,6 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
         }
     }
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, login, password);
-    }
 
     private ServerStudyGroup buildStudyGroup(ResultSet rs) throws SQLException {
         try {
@@ -176,5 +176,13 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
         statement.setLong(12, studyGroup.getGroupAdmin().getLocation().getZ());
         statement.setString(13, studyGroup.getGroupAdmin().getLocation().getName());
         statement.setString(14, studyGroup.getUsername());
+    }
+
+    private Connection getConnection() throws SQLException {
+        DataBaseConnector dataBaseConnector = new DataBaseConnector();
+        dataBaseConnector.connect();
+        return dataBaseConnector.getCon();
+//        return DataBaseConnector.getCon();
+//        return DriverManager.getConnection(URL, login, password);
     }
 }

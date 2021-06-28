@@ -29,10 +29,12 @@ public class PostgreUserDataBase implements UserDataBase {
     public void insertUser(User user) throws SQLUniqueException {
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO \"Users\" VALUES(?,?)")) {
+
             statement.setString(1, user.getUserName());
             statement.setString(2, user.getPassword());
             statement.execute();
         } catch (SQLException unknownError) {
+            unknownError.printStackTrace();
             throw new SQLUniqueException();
         }
     }
@@ -69,6 +71,9 @@ public class PostgreUserDataBase implements UserDataBase {
     }
 
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, login, password);
+        DataBaseConnector dataBaseConnector = new DataBaseConnector();
+        dataBaseConnector.connect();
+        return dataBaseConnector.getCon();
+//        return DriverManager.getConnection(URL, login, password);
     }
 }
