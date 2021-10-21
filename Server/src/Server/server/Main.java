@@ -15,7 +15,6 @@ import Server.connection.response.ResponseSenderImpl;
 import Server.datebase.DataBaseConnector;
 import Server.datebase.PostgreStudyGroupDataBase;
 import Server.datebase.PostgreUserDataBase;
-import Server.server.runnable.ThreadProcessorImpl;
 import Server.user_manager.UserManager;
 import Server.user_manager.UserManagerImpl;
 import general.IOImpl;

@@ -129,7 +129,6 @@ public class Server implements ServerApp, IOImpl {
         commandReader.addCommand("sum_of_students_count", new SumOfStudentsCountCommand(collectionManager));
         commandReader.addCommand("update", new UpdateCommand(collectionManager, responseCreator));
         commandReader.addCommand("help", new HelpCommand(commandReader.getCommandMap(), responseCreator));
-
     }
 
     /**
