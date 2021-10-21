@@ -1,3 +1,3 @@
-# [Laba7](https://github.com/kkkooolllyyyaaa/Laba7/Lab7.pfd) #
-
+# Laba7 #
+[Report](https://github.com/kkkooolllyyyaaa/Laba7/blob/master/Lab7.pdf)
 
