@@ -7,10 +7,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Server" level="project" />
+    <orderEntry type="library" scope="TEST" name="Server" level="project" />
     <orderEntry type="library" name="Client" level="project" />
     <orderEntry type="module" module-name="General" />
-    <orderEntry type="library" name="postgresql-42.2.21" level="project" />
     <orderEntry type="library" name="jsch-0.1.55" level="project" />
+    <orderEntry type="library" name="postgresql-42.2.21" level="project" />
   </component>
 </module>

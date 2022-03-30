@@ -7,5 +7,4 @@ public interface ClientAuthorizer {
     void registerClient() throws IOException;
 
     void authorizeUser() throws IOException;
-
 }
