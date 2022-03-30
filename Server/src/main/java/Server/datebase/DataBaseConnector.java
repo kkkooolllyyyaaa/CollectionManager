@@ -7,56 +7,67 @@ import com.jcraft.jsch.Session;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Properties;
 
 public class DataBaseConnector {
+    private static String sshUser;
+    private static String sshPassword;
+    private static String sshHost;
+    private static int sshPort;
 
-    private String strSshUser = "s311690";
-    private String strSshPassword = "pdw855";
-    private String strSshHost = "se.ifmo.ru";
-    private int nSshPort = 2222;
-    private String strRemoteHost = "pg";
+    private static String remoteHost;
+    private static int remotePort;
+    private static int localPort;
 
-
-    private int nRemotePort = 5432;
-    private int nLocalPort = 5430;
-    private String strDbUser = "s311690";
-    private String strDbPassword = "pdw855";
-
-
+    private static String dbUser;
+    private static String dbPassword;
     private static Connection con;
 
-    public void connect() {
-        this.doSshTunnel(strSshUser, strSshPassword, strSshHost, nSshPort, strRemoteHost, nLocalPort, nRemotePort);
+    public static void connect() {
         try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
+            con = DriverManager.getConnection("jdbc:postgresql://localhost:" + localPort + "/studs", dbUser, dbPassword);
+        } catch (SQLException e) {
             e.printStackTrace();
-        }
-        try {
-            this.con = DriverManager.getConnection("jdbc:postgresql://localhost:" + nLocalPort + "/studs", strDbUser, strDbPassword);
-        } catch (SQLException throwables) {
-            System.out.println("Error in SSH tunnel)");
-            throwables.printStackTrace();
         }
     }
 
-    private void doSshTunnel(String strSshUser, String strSshPassword, String strSshHost, int nSshPort, String strRemoteHost, int nLocalPort, int nRemotePort) {
+    public static void init(){
+        initFields();
+        doSshTunnel();
+    }
+
+    private static void doSshTunnel() {
         try {
             JSch jsch = new JSch();
-            Session session = jsch.getSession(strSshUser, strSshHost, nSshPort);
-            session.setPassword(strSshPassword);
+            Session session = jsch.getSession(sshUser, sshHost, sshPort);
+            session.setPassword(sshPassword);
             Properties config = new Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setConfig(config);
             session.connect();
-            session.setPortForwardingL(nLocalPort, strRemoteHost, nRemotePort);
-        } catch (JSchException ignored) {
-
+            session.setPortForwardingL(localPort, remoteHost, remotePort);
+        } catch (JSchException unexpected) {
+            unexpected.printStackTrace();
         }
     }
 
-    public Connection getCon() {
-        return this.con;
+    private static void initFields() {
+        sshUser = PropertyManager.getProperty("sshUser");
+        sshPassword = PropertyManager.getProperty("sshPassword");
+        sshHost = PropertyManager.getProperty("sshHost");
+        sshPort = Integer.parseInt(Objects.requireNonNull(PropertyManager.getProperty("sshPortNumber")));
+
+        remoteHost = PropertyManager.getProperty("remoteHost");
+        remotePort = Integer.parseInt(Objects.requireNonNull(PropertyManager.getProperty("remotePort")));
+        localPort = Integer.parseInt(Objects.requireNonNull(PropertyManager.getProperty("localPort")));
+
+        dbUser = PropertyManager.getProperty("dbUser");
+        dbPassword = PropertyManager.getProperty("dbPassword");
+    }
+
+    public static Connection getConnection() {
+        connect();
+        return con;
     }
 }

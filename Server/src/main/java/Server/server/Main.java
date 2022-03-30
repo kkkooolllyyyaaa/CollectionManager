@@ -1,6 +1,7 @@
 package Server.server;
 
 
+import Server.collection.CollectionManager;
 import Server.collection.CollectionManagerImpl;
 import Server.commands.ServerCommandReaderImpl;
 import Server.connection.ServerConnectionManagerImpl;
@@ -12,9 +13,7 @@ import Server.connection.response.ResponseCreator;
 import Server.connection.response.ResponseCreatorImpl;
 import Server.connection.response.ResponseSender;
 import Server.connection.response.ResponseSenderImpl;
-import Server.datebase.DataBaseConnector;
-import Server.datebase.PostgreStudyGroupDataBase;
-import Server.datebase.PostgreUserDataBase;
+import Server.datebase.*;
 import Server.user_manager.UserManager;
 import Server.user_manager.UserManagerImpl;
 import general.IOImpl;
@@ -26,14 +25,13 @@ public class Main {
     public static void main(String[] args) {
         if (args.length == 1) {
             try {
-                DataBaseConnector dataBaseConnector = new DataBaseConnector();
-                dataBaseConnector.connect();
+                DataBaseConnector.init();
                 ResponseCreator responseCreator = new ResponseCreatorImpl();
                 StudyGroupBuilder builder = new StudyGroupBuilderImpl(IOImpl.reader, false, new StudyGroupValidatorImpl());
-                PostgreStudyGroupDataBase postgreStudyGroupDataBase = new PostgreStudyGroupDataBase(builder);
-                PostgreUserDataBase userDataBase = new PostgreUserDataBase();
+                StudyGroupDataBase studyGroupDataBase = new PostgreStudyGroupDataBase(builder);
+                UserDataBase userDataBase = new PostgreUserDataBase();
                 UserManager userManager = new UserManagerImpl(userDataBase);
-                CollectionManagerImpl collectionManager = new CollectionManagerImpl(responseCreator, postgreStudyGroupDataBase);
+                CollectionManager collectionManager = new CollectionManagerImpl(responseCreator, studyGroupDataBase);
                 ServerCommandReaderImpl commandReader = new ServerCommandReaderImpl();
                 ServerConnectionManagerImpl connectionManager = new ServerConnectionManagerImpl();
                 RequestReader requestReader = new RequestReaderImpl();

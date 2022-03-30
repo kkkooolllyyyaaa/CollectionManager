@@ -1,7 +1,9 @@
 package general;
 
-import java.io.Serializable;
+import lombok.Getter;
 
+import java.io.Serializable;
+@Getter
 public enum Semester implements Serializable {
     FIRST("FIRST", 1),
     SECOND("SECOND", 2),
@@ -23,13 +25,5 @@ public enum Semester implements Serializable {
         for (Semester semester : Semester.values()) {
             System.out.println(semester.getUrl());
         }
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public String getUrl() {
-        return url;
     }
 }

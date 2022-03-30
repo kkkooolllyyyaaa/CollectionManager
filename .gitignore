@@ -1,3 +1,7 @@
 # Project exclude paths
 /out/
 .idea
+MultiModuleLab7.iml
+Client/Client.iml
+General/General.iml
+Server/Server.iml

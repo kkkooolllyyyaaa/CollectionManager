@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
 /**
  * Класс который хранит коллекцию и совершает действия с ней
  */
-public final class CollectionManagerImpl extends AbstractCollectionManager {
+public final class CollectionManagerImpl implements CollectionManager {
+    private LinkedList<ServerStudyGroup> studyGroups;
     private final ZonedDateTime creationDate;
     private final ResponseCreator responseCreator;
     private final StudyGroupDataBase dataBase;
@@ -36,7 +37,9 @@ public final class CollectionManagerImpl extends AbstractCollectionManager {
         this.responseCreator = responseCreator;
         this.dataBase = dataBase;
         try {
-            studyGroups.addAll(dataBase.getAll());
+            dataBase.deleteStudyGroupById(4);
+            CopyOnWriteArrayList<ServerStudyGroup> serverStudyGroups = dataBase.getAll();
+            studyGroups.addAll(serverStudyGroups);
             initOwners();
         } catch (SQLNoDataException ignored) {
         }
@@ -69,7 +72,7 @@ public final class CollectionManagerImpl extends AbstractCollectionManager {
     @Override
     public void sumOfStudentsCount() {
         int id = studyGroups.stream().mapToInt(ServerStudyGroup::getStudentsCount).sum();
-        responseCreator.addToMsg(Integer.toString(id));
+        responseCreator.addToMsg("Всего студентов: " + id);
     }
 
     /**

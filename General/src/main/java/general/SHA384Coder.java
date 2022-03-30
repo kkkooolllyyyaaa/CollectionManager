@@ -20,11 +20,11 @@ public class SHA384Coder {
             MessageDigest md = MessageDigest.getInstance(encryptAlg);
             byte[] messageDigest = md.digest(password.getBytes());
             BigInteger no = new BigInteger(1, messageDigest);
-            String hashText = no.toString(16);
+            StringBuilder hashText = new StringBuilder(no.toString(16));
             while (hashText.length() < 32) {
-                hashText = "0" + hashText;
+                hashText.insert(0, "0");
             }
-            return hashText;
+            return hashText.toString();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("No such algorithm");
         }

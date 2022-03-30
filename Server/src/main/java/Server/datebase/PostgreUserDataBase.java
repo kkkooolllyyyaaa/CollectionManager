@@ -8,14 +8,10 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class PostgreUserDataBase implements UserDataBase {
-    private final static String URL = "jdbc:postgresql://localhost:9090/postgres";
-    private final static String login = "tsypk";
-    private final static String password = "kekkekkek";
-
     @Override
     public User getUser(User user) throws SQLNoDataException {
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM \"Users\" WHERE username = ?")) {
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM \"Users_prog\" WHERE username = ?")) {
             statement.setString(1, user.getUserName());
             ResultSet rs = statement.executeQuery();
             rs.next();
@@ -28,7 +24,7 @@ public class PostgreUserDataBase implements UserDataBase {
     @Override
     public void insertUser(User user) throws SQLUniqueException {
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO \"Users\" VALUES(?,?)")) {
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO \"Users_prog\" VALUES(?,?)")) {
 
             statement.setString(1, user.getUserName());
             statement.setString(2, user.getPassword());
@@ -42,7 +38,7 @@ public class PostgreUserDataBase implements UserDataBase {
     @Override
     public void deleteUser(User user) throws SQLNoDataException {
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM \"Users\" WHERE username = ?")) {
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM \"Users_prog\" WHERE username = ?")) {
             statement.setString(1, user.getUserName());
             statement.execute();
         } catch (SQLException e) {
@@ -53,7 +49,7 @@ public class PostgreUserDataBase implements UserDataBase {
     @Override
     public ArrayList<User> getAll() throws SQLNoDataException {
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM \"Users\"")) {
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM \"Users_prog\"")) {
             ArrayList<User> arrayList = new ArrayList<>();
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -71,9 +67,7 @@ public class PostgreUserDataBase implements UserDataBase {
     }
 
     private Connection getConnection() throws SQLException {
-        DataBaseConnector dataBaseConnector = new DataBaseConnector();
-        dataBaseConnector.connect();
-        return dataBaseConnector.getCon();
-//        return DriverManager.getConnection(URL, login, password);
+
+        return DataBaseConnector.getConnection();
     }
 }

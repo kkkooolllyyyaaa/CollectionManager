@@ -12,9 +12,6 @@ import java.time.ZonedDateTime;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
-    private final static String URL = "jdbc:postgresql://localhost:9090/postgres";
-    private final static String login = "tsypk";
-    private final static String password = "kekkekkek";
     private final StudyGroupBuilder builder;
 
     public PostgreStudyGroupDataBase(StudyGroupBuilder builder) {
@@ -88,6 +85,7 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
             statement.execute();
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -130,6 +128,7 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
             }
             return arrayList;
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new SQLNoDataException();
         }
     }
@@ -176,9 +175,6 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
     }
 
     private Connection getConnection() throws SQLException {
-        DataBaseConnector dataBaseConnector = new DataBaseConnector();
-        dataBaseConnector.connect();
-        return dataBaseConnector.getCon();
-//        return DriverManager.getConnection(URL, login, password);
+        return DataBaseConnector.getConnection();
     }
 }

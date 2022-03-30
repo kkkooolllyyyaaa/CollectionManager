@@ -1,7 +1,10 @@
 package general;
 
+import lombok.Getter;
+
 import java.io.Serializable;
 
+@Getter
 public enum FormOfEducation implements Serializable {
     DISTANCE_EDUCATION("DISTANCE_EDUCATION"),
     FULL_TIME_EDUCATION("FULL_TIME_EDUCATION"),
@@ -19,9 +22,5 @@ public enum FormOfEducation implements Serializable {
         for (FormOfEducation fOE : FormOfEducation.values()) {
             System.out.println(fOE.getUrl());
         }
-    }
-
-    public String getUrl() {
-        return url;
     }
 }

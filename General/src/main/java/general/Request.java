@@ -1,19 +1,19 @@
 package general;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serial;
 import java.io.Serializable;
-
+@Getter
+@Setter
 public class Request implements Serializable {
-
+    @Serial
     private final static long serialVersionUID = -14567L;
-
     private final RequestType requestType;
-
     private String commandName;
-
     private String arg;
-
     private StudyGroup studyGroup;
-
     private User user;
 
     public Request(RequestType requestType, String commandName, String arg) {
@@ -24,39 +24,6 @@ public class Request implements Serializable {
 
     public Request(RequestType requestType, User user) {
         this.requestType = requestType;
-        this.user = user;
-    }
-
-    public RequestType getRequestType() {
-        return requestType;
-    }
-
-
-    public String getCommandName() {
-        return commandName;
-    }
-
-    public String getArg() {
-        return arg;
-    }
-
-    public void setArg(String arg) {
-        this.arg = arg;
-    }
-
-    public StudyGroup getStudyGroup() {
-        return studyGroup;
-    }
-
-    public void setStudyGroup(StudyGroup studyGroup) {
-        this.studyGroup = studyGroup;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
         this.user = user;
     }
 }

@@ -1,14 +1,16 @@
 package general;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 /**
- * x
  * Класс - абстракция каждой из команд
  * содержит абстрактный метод execute
  */
 public abstract class AbstractCommand implements Command {
+    @Getter
     private final String name;
+    @Getter
     private final String description;
     private boolean isStudyGroupCommand = false;
 
@@ -22,38 +24,11 @@ public abstract class AbstractCommand implements Command {
         this.isStudyGroupCommand = isStudyGroupCommand;
     }
 
-    /**
-     * @return Имя команды
-     */
-    public final String getName() {
-        return name;
-    }
-
-    /**
-     * @return Описание команды
-     */
-    public final String getDescription() {
-        return description;
-    }
-
     public abstract void execute(String[] args);
 
     @Override
     public boolean isStudyGroupCommand() {
         return isStudyGroupCommand;
-    }
-
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AbstractCommand that = (AbstractCommand) o;
-        return Objects.equals(name, that.name);
-    }
-
-    @Override
-    public final int hashCode() {
-        return Objects.hash(name);
     }
 }
 
