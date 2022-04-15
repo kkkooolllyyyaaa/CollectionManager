@@ -3,7 +3,7 @@ package Client.commands;
 
 import general.AbstractCommand;
 
-import java.util.TreeMap;
+import java.util.Collection;
 
 public class ClientHelpCommand extends AbstractCommand {
     private final ClientCommandReader reader;
@@ -15,9 +15,8 @@ public class ClientHelpCommand extends AbstractCommand {
 
     @Override
     public void execute(String[] args) {
-        TreeMap<String, AbstractCommand> map = reader.getCommandMap();
-        for (String key : map.keySet()) {
-            AbstractCommand command = map.get(key);
+        Collection<AbstractCommand> map = reader.getCommands();
+        for (AbstractCommand command : map) {
             System.out.printf("%-14s", command.getName());
             System.out.printf("%s", " : " + command.getDescription() + "\n");
         }

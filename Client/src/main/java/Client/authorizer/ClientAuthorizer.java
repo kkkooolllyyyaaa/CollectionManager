@@ -4,7 +4,7 @@ package Client.authorizer;
 import java.io.IOException;
 
 public interface ClientAuthorizer {
-    void registerClient() throws IOException;
+    void register() throws IOException;
 
-    void authorizeUser() throws IOException;
+    void authorize() throws IOException;
 }

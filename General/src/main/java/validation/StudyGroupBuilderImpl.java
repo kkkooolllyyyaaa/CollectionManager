@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
  * Класс, обеспечивающий ввод элементов StudyGroups
  * Обеспечивает валидность вводимых полей
  */
-public class StudyGroupBuilderFunctional implements StudyGroupBuilder {
+public class StudyGroupBuilderImpl implements StudyGroupBuilder {
 
     private final boolean isScript;
     private final StudyGroupValidator validator;
@@ -31,7 +31,7 @@ public class StudyGroupBuilderFunctional implements StudyGroupBuilder {
     private Person groupAdmin; //Поле может быть null
     private String username;
 
-    public StudyGroupBuilderFunctional(BufferedReader bufferedReader, boolean isScript, StudyGroupValidator validator) {
+    public StudyGroupBuilderImpl(BufferedReader bufferedReader, boolean isScript, StudyGroupValidator validator) {
         reader = bufferedReader;
         this.isScript = isScript;
         this.validator = validator;
@@ -417,7 +417,7 @@ public class StudyGroupBuilderFunctional implements StudyGroupBuilder {
      */
     private String inputLine() {
         try {
-            line = reader.readLine().toLowerCase().trim();
+            line = reader.readLine().toLowerCase();
         } catch (IOException ioException) {
             IO.println(ioException.getMessage());
         } catch (NoSuchElementException | NullPointerException e) {

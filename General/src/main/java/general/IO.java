@@ -9,7 +9,9 @@ public class IO {
     private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     public static String readLine() throws IOException {
-        return reader.readLine();
+        String line = reader.readLine();
+        line = line != null ? line.trim() : null;
+        return line;
     }
 
     public static String readPassword() throws IOException {

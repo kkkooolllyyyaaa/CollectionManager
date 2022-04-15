@@ -20,7 +20,7 @@ import Server.user_manager.UserManager;
 import Server.user_manager.UserManagerImpl;
 import general.IO;
 import validation.StudyGroupBuilder;
-import validation.StudyGroupBuilderFunctional;
+import validation.StudyGroupBuilderImpl;
 import validation.StudyGroupValidatorImpl;
 
 public class Main {
@@ -29,7 +29,7 @@ public class Main {
             try {
                 DataBaseConnector.init();
                 ResponseCreator responseCreator = new ResponseCreatorImpl();
-                StudyGroupBuilder builder = new StudyGroupBuilderFunctional(IO.getReader(), false, new StudyGroupValidatorImpl());
+                StudyGroupBuilder builder = new StudyGroupBuilderImpl(IO.getReader(), false, new StudyGroupValidatorImpl());
                 StudyGroupDataBase studyGroupDataBase = new PostgreStudyGroupDataBase(builder);
                 UserDataBase userDataBase = new PostgreUserDataBase();
                 UserManager userManager = new UserManagerImpl(userDataBase);

@@ -2,10 +2,10 @@ package Client;
 
 
 import Client.authorizer.ClientAuthorizer;
-import Client.authorizer.ClientAuthorizerFunctional;
+import Client.authorizer.ClientAuthorizerImpl;
 import Client.client.Client;
 import Client.client.ClientApp;
-import Client.commands.ClientCommandReaderFunctional;
+import Client.commands.ClientCommandReaderImpl;
 import Client.connection.ClientConnectionManager;
 import Client.connection.ClientConnectionManagerImpl;
 import Client.connection.request.RequestSender;
@@ -14,14 +14,14 @@ import Client.connection.response.ResponseReader;
 import Client.connection.response.ResponseReaderImpl;
 
 public class Main {
-    public static final void main(String[] args) {
+    public static void main(String[] args) {
         if (args.length == 1) {
             try {
                 ClientConnectionManager manager = new ClientConnectionManagerImpl();
                 RequestSender sender = new RequestSenderImpl();
                 ResponseReader reader = new ResponseReaderImpl();
-                ClientAuthorizer authorizer = new ClientAuthorizerFunctional(manager, sender, reader);
-                ClientApp client = new Client(new ClientCommandReaderFunctional(),
+                ClientAuthorizer authorizer = new ClientAuthorizerImpl(manager, sender, reader, Integer.parseInt(args[0]));
+                ClientApp client = new Client(new ClientCommandReaderImpl(),
                         manager,
                         sender,
                         reader,

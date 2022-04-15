@@ -16,7 +16,7 @@ public class ClientRegisterCommand extends AbstractCommand {
     @Override
     public void execute(String[] args) {
         try {
-            authorizer.registerClient();
+            authorizer.register();
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

@@ -4,21 +4,19 @@ import exceptions.CommandIsNotExistException;
 import general.AbstractCommand;
 import general.StudyGroup;
 
-import java.util.HashSet;
-import java.util.TreeMap;
+import java.util.Collection;
+import java.util.HashMap;
 
 
 /**
  * Класс, отвечающий за общение Client и CollectionManagerImpl
  * Является пунктом упрравления для всех команд
  */
-public class ClientCommandReaderFunctional implements ClientCommandReader {
-    private final TreeMap<String, AbstractCommand> commandMap;
-    private final HashSet<String> scriptSet;
+public class ClientCommandReaderImpl implements ClientCommandReader {
+    private final HashMap<String, AbstractCommand> commandMap;
 
-    public ClientCommandReaderFunctional() {
-        commandMap = new TreeMap<>();
-        scriptSet = new HashSet<>();
+    public ClientCommandReaderImpl() {
+        commandMap = new HashMap<>();
     }
 
 
@@ -31,13 +29,11 @@ public class ClientCommandReaderFunctional implements ClientCommandReader {
             return;
         String[] updatedUserCommand = userCommand.trim().toLowerCase().split("\\s+", 2);
         AbstractCommand command = commandMap.get(updatedUserCommand[0]);
-        if (command != null) {
-            if (!command.isStudyGroupCommand())
-                command.execute(updatedUserCommand);
-            else
-                throw new RuntimeException();
-        } else if (!updatedUserCommand[0].equals(""))
-            throw new CommandIsNotExistException("Данной команды не существует");
+
+        if (command != null)
+            command.execute(updatedUserCommand);
+        else if (!updatedUserCommand[0].equals(""))
+            throw new CommandIsNotExistException("command is not exist");
     }
 
 
@@ -47,16 +43,8 @@ public class ClientCommandReaderFunctional implements ClientCommandReader {
     }
 
     @Override
-    public TreeMap<String, AbstractCommand> getCommandMap() {
-        return commandMap;
-    }
-
-    public void addScript(String name) {
-        scriptSet.add(name);
-    }
-
-    public void removeScript(String name) {
-        scriptSet.remove(name);
+    public Collection<AbstractCommand> getCommands() {
+        return commandMap.values();
     }
 
 }

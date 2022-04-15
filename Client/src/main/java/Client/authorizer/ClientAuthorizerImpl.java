@@ -11,34 +11,36 @@ import general.*;
 import java.io.IOException;
 import java.net.ConnectException;
 
-public class ClientAuthorizerFunctional implements ClientAuthorizer {
+public class ClientAuthorizerImpl implements ClientAuthorizer {
     private final ClientConnectionManager connectionManager;
     private final RequestSender requestSender;
     private final ResponseReader responseReader;
+    private final int port;
     private String userName;
     private String password;
     private User user;
 
-    public ClientAuthorizerFunctional(ClientConnectionManager connectionManager, RequestSender requestSender, ResponseReader responseReader) {
+    public ClientAuthorizerImpl(ClientConnectionManager connectionManager, RequestSender requestSender, ResponseReader responseReader, int port) {
         this.connectionManager = connectionManager;
         this.requestSender = requestSender;
         this.responseReader = responseReader;
+        this.port = port;
     }
 
     @Override
-    public void registerClient() throws IOException {
+    public void register() throws IOException {
         try {
             inputRegistrationData();
             user = new User(userName, password);
             Request request = new Request(RequestType.REGISTRATION_REQUEST, user);
-            connectionManager.openConnection(8080);
+            connectionManager.openConnection(port);
             requestSender.sendRequest(connectionManager.getSocketChannel(), request);
             Response response = responseReader.readResponse(connectionManager.getSocketChannel());
             IO.println(response.getMessage());
         } catch (BadPasswordException e) {
             IO.errPrint(e.getMessage());
             IO.println("Please try again");
-            registerClient();
+            register();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
@@ -47,24 +49,20 @@ public class ClientAuthorizerFunctional implements ClientAuthorizer {
     }
 
     @Override
-    public void authorizeUser() throws IOException {
+    public void authorize() throws IOException {
         try {
             inputRegistrationData();
             user = new User(userName, password);
             Client.setCurrentUser(user);
             Request request = new Request(RequestType.AUTHORIZATION_REQUEST, user);
-            connectionManager.openConnection(8080);
+            connectionManager.openConnection(port);
             requestSender.sendRequest(connectionManager.getSocketChannel(), request);
             Response response = responseReader.readResponse(connectionManager.getSocketChannel());
-            if (!response.getResponseType().equals(ResponseType.ERROR_RESPONSE)) {
-                IO.println(response.getMessage());
-            } else {
-                IO.println(response.getMessage());
-            }
+            IO.println(response.getMessage());
         } catch (BadPasswordException e) {
             IO.errPrint(e.getMessage());
             IO.println("Please try again");
-            authorizeUser();
+            authorize();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (ConnectException e) {

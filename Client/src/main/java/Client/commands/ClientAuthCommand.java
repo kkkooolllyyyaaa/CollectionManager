@@ -17,7 +17,7 @@ public class ClientAuthCommand extends AbstractCommand {
     @Override
     public void execute(String[] args) {
         try {
-            authorizer.authorizeUser();
+            authorizer.authorize();
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

@@ -5,7 +5,8 @@ import exceptions.CommandIsNotExistException;
 import general.AbstractCommand;
 import general.StudyGroup;
 
-import java.util.TreeMap;
+import java.util.Collection;
+import java.util.HashMap;
 
 public interface ClientCommandReader {
 
@@ -13,5 +14,5 @@ public interface ClientCommandReader {
 
     void addCommand(String commandName, AbstractCommand command);
 
-    TreeMap<String, AbstractCommand> getCommandMap();
+    Collection<AbstractCommand> getCommands();
 }

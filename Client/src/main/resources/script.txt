@@ -1,0 +1,7 @@
+help
+
+show_mine
+
+show_full
+
+add

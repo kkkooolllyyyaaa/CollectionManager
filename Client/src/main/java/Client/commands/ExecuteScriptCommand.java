@@ -7,16 +7,18 @@ import general.AbstractCommand;
 import general.IO;
 import general.Response;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.EOFException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashSet;
 
 public class ExecuteScriptCommand extends AbstractCommand {
-    ClientCommandReaderFunctional commandReader;
-    Client client;
-    String fileName;
-    HashSet<String> scripts;
+    private final ClientCommandReaderImpl commandReader;
+    private final Client client;
+    private final HashSet<String> scripts;
 
-    public ExecuteScriptCommand(Client client, ClientCommandReaderFunctional commandReader) {
+    public ExecuteScriptCommand(Client client, ClientCommandReaderImpl commandReader) {
         super("execute_script", "Execute script from file");
         this.client = client;
         this.commandReader = commandReader;
@@ -26,31 +28,26 @@ public class ExecuteScriptCommand extends AbstractCommand {
 
     @Override
     public void execute(String[] args) {
-        if (args.length > 1) {
-            fileName = args[1];
-        } else {
+        if (args.length < 2) {
             IO.errPrint("Invalid argument for command");
             return;
         }
+        String fileName = args[1];
+
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            if (scripts.contains(fileName)) {
+            if (scripts.contains(fileName))
                 throw new ScriptException();
-            }
             scripts.add(fileName);
+
             while (reader.ready()) {
-                String commands = reader.readLine();
-                if (commands.split("\n")[0].trim().equalsIgnoreCase("execute_script"))
-                    continue;
+                String command = reader.readLine();
                 try {
-                    commandReader.executeCommand(commands.trim().toLowerCase(), null);
+                    commandReader.executeCommand(command.trim().toLowerCase(), null);
                 } catch (CommandIsNotExistException e) {
                     try {
-                        File file = new File(commands);
-                        if (file.isFile())
-                            continue;
-                        Response response = client.communicateWithServer(commands);
+                        Response response = client.communicateWithServer(command);
                         IO.println(response.getMessage());
-                    } catch (EOFException e1) {
+                    } catch (EOFException eof) {
                         IO.errPrint("too many bytes");
                     } catch (IOException | ClassNotFoundException ioe) {
                         IO.errPrint(ioe.getMessage());
@@ -61,16 +58,14 @@ public class ExecuteScriptCommand extends AbstractCommand {
         } catch (IOException e) {
             IO.errPrint(e.getMessage());
         }
+    }
+
+    public void clearScripts() {
         scripts.clear();
     }
 
     private void removeScript(String fileName) {
-        for (String st : scripts) {
-            if (st.equals(fileName)) {
-                scripts.remove(st);
-                break;
-            }
-        }
+        scripts.remove(fileName);
     }
 
     @Override

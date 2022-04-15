@@ -5,10 +5,9 @@ import Server.collection.StudyGroupShower;
 import Server.connection.response.ResponseCreator;
 import general.AbstractCommand;
 
-/**
- * @author tsypk on 14.04.2022 21:24
- * @project Lab7
- */
+import java.util.stream.Collectors;
+
+
 public class ShowMineCommand extends AbstractCommand {
     private final CollectionManager collectionManager;
     private final ResponseCreator responseCreator;
@@ -24,11 +23,11 @@ public class ShowMineCommand extends AbstractCommand {
         String username = args[2];
         long cnt = collectionManager.getStudyGroups().stream().filter(x -> x.getUsername().equals(username)).count();
 
-        StringBuilder sb = new StringBuilder("Ваших элементов в коллекции: " + cnt).append("\n");
+        String str = "Ваших элементов в коллекции: " + cnt + "\n" +
+                collectionManager.getStudyGroups().stream().
+                        filter(x -> x.getUsername().equals(username)).
+                        map(StudyGroupShower::toStrView).collect(Collectors.joining());
 
-        collectionManager.getStudyGroups().stream().filter(x -> x.getUsername().equals(username)).
-                forEach(x -> sb.append(StudyGroupShower.toStrView(x)));
-
-        responseCreator.addToMsg(sb.toString());
+        responseCreator.addToMsg(str);
     }
 }

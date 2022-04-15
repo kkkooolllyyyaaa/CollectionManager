@@ -8,7 +8,7 @@ import Client.connection.response.ResponseReader;
 import exceptions.CommandIsNotExistException;
 import general.*;
 import validation.StudyGroupBuilder;
-import validation.StudyGroupBuilderFunctional;
+import validation.StudyGroupBuilderImpl;
 import validation.StudyGroupValidatorImpl;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import static general.IO.getReader;
 
 
 public class Client implements ClientApp {
-    private final ClientCommandReaderFunctional commandReader;
+    private final ClientCommandReaderImpl commandReader;
     private final ClientConnectionManager connectionManager;
     private final RequestSender requestSender;
     private final ResponseReader responseReader;
@@ -32,7 +32,7 @@ public class Client implements ClientApp {
     private static User currentUser;
     private boolean isRunning;
 
-    public Client(ClientCommandReaderFunctional commandReader,
+    public Client(ClientCommandReaderImpl commandReader,
                   ClientConnectionManager connectionManager,
                   RequestSender requestSender,
                   ResponseReader responseReader,
@@ -44,7 +44,7 @@ public class Client implements ClientApp {
         this.responseReader = responseReader;
         this.authorizer = authorizer;
         this.port = port;
-        studyGroupBuilder = new StudyGroupBuilderFunctional(getReader(), false, new StudyGroupValidatorImpl());
+        studyGroupBuilder = new StudyGroupBuilderImpl(getReader(), false, new StudyGroupValidatorImpl());
         isRunning = true;
         addCommands();
     }
@@ -58,7 +58,9 @@ public class Client implements ClientApp {
         while (isRunning) {
             String inputString = "";
             try {
-                inputString = IO.readLine().trim();
+                inputString = IO.readLine();
+                if (inputString == null)
+                    throw new NoSuchElementException();
                 commandReader.executeCommand(inputString, null);
             } catch (CommandIsNotExistException e) {
                 try {
@@ -71,7 +73,7 @@ public class Client implements ClientApp {
                 } catch (IOException | ClassNotFoundException ioException) {
                     ioException.printStackTrace();
                 }
-            } catch (NoSuchElementException | NullPointerException e) {
+            } catch (NoSuchElementException e) {
                 IO.errPrint("You can't input this\nThe work of Client will be stopped");
                 return;
             } catch (IOException e) {
@@ -129,6 +131,7 @@ public class Client implements ClientApp {
 
     /**
      * Отправляет запрос серверу, вместе с элементом коллекции
+     *
      * @return Response - ответ сервера
      */
     private Response reCommunicateWithServer(Request request) throws IOException, ClassNotFoundException {
