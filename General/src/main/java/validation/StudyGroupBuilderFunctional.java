@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
  * Класс, обеспечивающий ввод элементов StudyGroups
  * Обеспечивает валидность вводимых полей
  */
-public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
+public class StudyGroupBuilderFunctional implements StudyGroupBuilder {
 
     private final boolean isScript;
     private final StudyGroupValidator validator;
@@ -31,7 +31,7 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
     private Person groupAdmin; //Поле может быть null
     private String username;
 
-    public StudyGroupBuilderImpl(BufferedReader bufferedReader, boolean isScript, StudyGroupValidator validator) {
+    public StudyGroupBuilderFunctional(BufferedReader bufferedReader, boolean isScript, StudyGroupValidator validator) {
         reader = bufferedReader;
         this.isScript = isScript;
         this.validator = validator;
@@ -220,25 +220,25 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
     public Long askStudyGroupId() {
         String s;
         try {
-            this.println("Input Study group id: ");
+            IO.println("Input Study group id: ");
             s = reader.readLine();
             if (InputChecker.checkLong(s.trim()))
                 return Long.parseLong(s);
             else
-                println("Study group id can't be null; should be long");
+                IO.println("Study group id can't be null; should be long");
         } catch (IOException e) {
-            println("Input error");
+            IO.println("Input error");
         }
         return null;
     }
 
     @Override
     public void askName() {
-        this.println("Input Study Group Name: ");
+        IO.println("Input Study Group Name: ");
         try {
             setName(inputLine());
         } catch (InvalidFieldException e) {
-            println("Study Group Name should be String, can't be null");
+            IO.println("Study Group Name should be String, can't be null");
             if (!isScript)
                 askName();
         }
@@ -246,11 +246,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     @Override
     public void askCoordinateX() {
-        this.println("Input Study Group Coordinate X: ");
+        IO.println("Input Study Group Coordinate X: ");
         try {
             setCoordinateX(Integer.parseInt(inputLine()));
         } catch (InvalidFieldException | NumberFormatException e) {
-            println("Study Group Coordinate X should be int and greater than -393");
+            IO.println("Study Group Coordinate X should be int and greater than -393");
             if (!isScript)
                 askCoordinateX();
         }
@@ -258,11 +258,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     @Override
     public void askCoordinateY() {
-        this.println("Input Study Group Coordinate Y: ");
+        IO.println("Input Study Group Coordinate Y: ");
         try {
             setCoordinateY(Long.parseLong(inputLine()));
         } catch (InvalidFieldException | NumberFormatException e) {
-            println("Study Group Coordinate Y should be Long and greater than -741, can't be null");
+            IO.println("Study Group Coordinate Y should be Long and greater than -741, can't be null");
             if (!isScript)
                 askCoordinateY();
         }
@@ -270,11 +270,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     @Override
     public void askStudentsCount() {
-        this.println("Input Study Group students count: ");
+        IO.println("Input Study Group students count: ");
         try {
             setStudentsCount(Integer.parseInt(inputLine()));
         } catch (InvalidFieldException | NumberFormatException e) {
-            println("Study Group students count should be int and greater than 0");
+            IO.println("Study Group students count should be int and greater than 0");
             if (!isScript)
                 askStudentsCount();
         }
@@ -283,11 +283,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
     @Override
     public void askFormOfEducation() {
         FormOfEducation.printValues();
-        this.println("Input Study Group Form Of Education: ");
+        IO.println("Input Study Group Form Of Education: ");
         try {
             setFormOfEducation(checkFormOfEducation(inputLine()));
         } catch (InvalidFieldException e) {
-            println("Field Form Of Education can't be null");
+            IO.println("Field Form Of Education can't be null");
             if (!isScript)
                 askFormOfEducation();
         } catch (EnumNotFoundException e) {
@@ -300,11 +300,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
     @Override
     public void askSemester() {
         Semester.printValues();
-        this.println("Input Study Group Semester: ");
+        IO.println("Input Study Group Semester: ");
         try {
             setSemester(checkSemester(inputLine()));
         } catch (InvalidFieldException e) {
-            println("Field Semester can't be null");
+            IO.println("Field Semester can't be null");
             if (!isScript)
                 askSemester();
         } catch (EnumNotFoundException e) {
@@ -316,11 +316,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     @Override
     public void askGAName() {
-        this.println("Input Study Group Group Admin name: ");
+        IO.println("Input Study Group Group Admin name: ");
         try {
             setGAName(inputLine());
         } catch (InvalidFieldException e) {
-            println("Study Group Group Admin name can't be void or null");
+            IO.println("Study Group Group Admin name can't be void or null");
             if (!isScript)
                 askGAName();
         }
@@ -328,11 +328,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     @Override
     public void askGAPassportID() {
-        this.println("Input Study Group Group Admin passportID: ");
+        IO.println("Input Study Group Group Admin passportID: ");
         try {
             setGAPassportID(inputLine());
         } catch (InvalidFieldException e) {
-            println("Study Group Group Admin passportID can't be null");
+            IO.println("Study Group Group Admin passportID can't be null");
             if (!isScript)
                 askGAPassportID();
         }
@@ -340,11 +340,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     @Override
     public void askGALocationX() {
-        this.println("Input Study Group Group Admin Location X: ");
+        IO.println("Input Study Group Group Admin Location X: ");
         try {
             setGALocationX(Long.parseLong(inputLine()));
         } catch (NumberFormatException e) {
-            println("Study Group Group Admin Location should be long");
+            IO.println("Study Group Group Admin Location should be long");
             if (!isScript)
                 askGALocationX();
         }
@@ -353,11 +353,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     @Override
     public void askGALocationY() {
-        this.println("Input Study Group Group Admin Location Y: ");
+        IO.println("Input Study Group Group Admin Location Y: ");
         try {
             setGALocationY(Long.parseLong(inputLine()));
         } catch (NumberFormatException | InvalidFieldException e) {
-            println("Study Group Group Admin Location should be Long, can't be null");
+            IO.println("Study Group Group Admin Location should be Long, can't be null");
             if (!isScript)
                 askGALocationY();
         }
@@ -365,11 +365,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     @Override
     public void askGALocationZ() {
-        this.println("Input Study Group Group Admin Location Z: ");
+        IO.println("Input Study Group Group Admin Location Z: ");
         try {
             setGALocationZ(Long.parseLong(inputLine()));
         } catch (NumberFormatException | InvalidFieldException e) {
-            println("Study Group Group Admin Location should be Long, can't be null");
+            IO.println("Study Group Group Admin Location should be Long, can't be null");
             if (!isScript)
                 askGALocationZ();
         }
@@ -377,11 +377,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     @Override
     public void askGALocationName() {
-        this.println("Input Study Group Admin Location name: ");
+        IO.println("Input Study Group Admin Location name: ");
         try {
             setGALocationName(inputLine());
         } catch (InvalidFieldException e) {
-            println("Study Group Group Admin Location name should be String, can't be null");
+            IO.println("Study Group Group Admin Location name should be String, can't be null");
             if (!isScript)
                 askGALocationName();
         }
@@ -389,11 +389,11 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
 
     @Override
     public void askUsername() {
-        println("Input username: ");
+        IO.println("Input username: ");
         try {
             setUsername(inputLine());
         } catch (InvalidFieldException e) {
-            println("username should be String, can't be null");
+            IO.println("username should be String, can't be null");
             if (!isScript)
                 askUsername();
         }
@@ -419,9 +419,9 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder, IOImpl {
         try {
             line = reader.readLine().toLowerCase().trim();
         } catch (IOException ioException) {
-            println(ioException.getMessage());
+            IO.println(ioException.getMessage());
         } catch (NoSuchElementException | NullPointerException e) {
-            errPrint("You can't input this");
+            IO.errPrint("You can't input this");
             System.exit(0);
         }
         return line;

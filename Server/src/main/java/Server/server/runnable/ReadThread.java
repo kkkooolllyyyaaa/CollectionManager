@@ -1,14 +1,13 @@
 package Server.server.runnable;
 
 import Server.connection.request.RequestReader;
-import general.IOImpl;
 import general.Request;
 
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.Callable;
 
-public class ReadThread implements Callable<Request>, IOImpl {
+public class ReadThread implements Callable<Request> {
     private final SocketChannel socketChannel;
     private final RequestReader reader;
 

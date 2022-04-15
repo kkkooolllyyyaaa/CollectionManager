@@ -2,7 +2,6 @@ package Client.commands;
 
 import exceptions.CommandIsNotExistException;
 import general.AbstractCommand;
-import general.IOImpl;
 import general.StudyGroup;
 
 import java.util.HashSet;
@@ -13,11 +12,11 @@ import java.util.TreeMap;
  * Класс, отвечающий за общение Client и CollectionManagerImpl
  * Является пунктом упрравления для всех команд
  */
-public class ClientCommandReaderImpl implements ClientCommandReader, IOImpl {
+public class ClientCommandReaderFunctional implements ClientCommandReader {
     private final TreeMap<String, AbstractCommand> commandMap;
     private final HashSet<String> scriptSet;
 
-    public ClientCommandReaderImpl() {
+    public ClientCommandReaderFunctional() {
         commandMap = new TreeMap<>();
         scriptSet = new HashSet<>();
     }

@@ -1,8 +1,9 @@
-package Server.commands;
+package Server.command.commands;
 
 
 import Server.collection.CollectionManager;
 import Server.collection.ServerStudyGroup;
+import Server.command.StudyGroupCommand;
 import exceptions.InvalidCommandType;
 import general.AbstractCommand;
 

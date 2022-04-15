@@ -2,22 +2,24 @@ package Server.server;
 
 
 import Server.collection.CollectionManager;
-import Server.commands.*;
+import Server.command.ServerCommandReader;
+import Server.command.commands.*;
 import Server.connection.ServerConnectionManager;
 import Server.connection.request.RequestHandler;
 import Server.connection.request.RequestReader;
 import Server.connection.response.ResponseCreator;
 import Server.connection.response.ResponseSender;
-import Server.server.runnable.ThreadProcessorImpl;
+import Server.server.runnable.ThreadProcessor;
+import Server.server.runnable.ThreadProcessorFunctional;
 import exceptions.CommandIsNotExistException;
-import general.IOImpl;
+import general.IO;
 
 import java.io.IOException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.NoSuchElementException;
 
-public class Server implements ServerApp, IOImpl {
+public class Server implements ServerApp {
     private final CollectionManager collectionManager;
     private final ServerCommandReader commandReader;
     private final ServerConnectionManager connectionManager;
@@ -63,11 +65,11 @@ public class Server implements ServerApp, IOImpl {
             try {
                 SocketChannel socketChannel = serverSocketChannel.accept();
                 if (socketChannel != null) {
-                    ThreadProcessorImpl threadProcessor = new ThreadProcessorImpl(requestReader, requestHandler, responseSender, socketChannel);
+                    ThreadProcessor threadProcessor = new ThreadProcessorFunctional(requestReader, requestHandler, responseSender, socketChannel);
                     new Thread(threadProcessor).start();
                 }
             } catch (IOException e) {
-                println("Работа Сервера будет прекращена");
+                IO.println("Server is stop working");
                 exit();
             }
         }
@@ -91,18 +93,16 @@ public class Server implements ServerApp, IOImpl {
      */
     private void startConsoleDaemon(ServerCommandReader commandReader) {
         Thread consoleThread = new Thread(() -> {
-            IOImpl userIO = new IOImpl() {
-            };
             while (!Thread.interrupted()) {
                 try {
-                    String str = userIO.readLine();
+                    String str = IO.readLine();
                     if (str == null)
                         throw new NoSuchElementException();
                     commandReader.executeServerCommand(str);
                 } catch (CommandIsNotExistException ioe) {
-                    println(ioe.getMessage());
+                    IO.println(ioe.getMessage());
                 } catch (NoSuchElementException | IOException e) {
-                    errPrint("You can't input this\nThe work of Server will be stopped");
+                    IO.errPrint("You can't input this\nThe work of Server will be stopped");
                     exit();
                     return;
                 }
@@ -126,6 +126,7 @@ public class Server implements ServerApp, IOImpl {
         commandReader.addCommand("remove_greater", new RemoveGreaterCommand(collectionManager));
         commandReader.addCommand("show", new ShowCommand(collectionManager, responseCreator));
         commandReader.addCommand("show_full", new ShowFullCommand(collectionManager, responseCreator));
+        commandReader.addCommand("show_mine", new ShowMineCommand(collectionManager, responseCreator));
         commandReader.addCommand("sum_of_students_count", new SumOfStudentsCountCommand(collectionManager));
         commandReader.addCommand("update", new UpdateCommand(collectionManager, responseCreator));
         commandReader.addCommand("help", new HelpCommand(commandReader.getCommandMap(), responseCreator));

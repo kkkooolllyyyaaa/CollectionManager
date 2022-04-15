@@ -4,19 +4,19 @@ import Client.client.Client;
 import exceptions.CommandIsNotExistException;
 import exceptions.ScriptException;
 import general.AbstractCommand;
-import general.IOImpl;
+import general.IO;
 import general.Response;
 
 import java.io.*;
 import java.util.HashSet;
 
-public class ExecuteScriptCommand extends AbstractCommand implements IOImpl {
-    ClientCommandReaderImpl commandReader;
+public class ExecuteScriptCommand extends AbstractCommand {
+    ClientCommandReaderFunctional commandReader;
     Client client;
     String fileName;
     HashSet<String> scripts;
 
-    public ExecuteScriptCommand(Client client, ClientCommandReaderImpl commandReader) {
+    public ExecuteScriptCommand(Client client, ClientCommandReaderFunctional commandReader) {
         super("execute_script", "Execute script from file");
         this.client = client;
         this.commandReader = commandReader;
@@ -29,7 +29,7 @@ public class ExecuteScriptCommand extends AbstractCommand implements IOImpl {
         if (args.length > 1) {
             fileName = args[1];
         } else {
-            errPrint("Invalid argument for command");
+            IO.errPrint("Invalid argument for command");
             return;
         }
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
@@ -49,17 +49,17 @@ public class ExecuteScriptCommand extends AbstractCommand implements IOImpl {
                         if (file.isFile())
                             continue;
                         Response response = client.communicateWithServer(commands);
-                        println(response.getMessage());
+                        IO.println(response.getMessage());
                     } catch (EOFException e1) {
-                        errPrint("too many bytes");
+                        IO.errPrint("too many bytes");
                     } catch (IOException | ClassNotFoundException ioe) {
-                        errPrint(ioe.getMessage());
+                        IO.errPrint(ioe.getMessage());
                     }
                 }
             }
             removeScript(fileName);
         } catch (IOException e) {
-            errPrint(e.getMessage());
+            IO.errPrint(e.getMessage());
         }
         scripts.clear();
     }

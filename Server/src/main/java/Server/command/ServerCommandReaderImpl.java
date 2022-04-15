@@ -1,7 +1,6 @@
-package Server.commands;
+package Server.command;
 
 import Server.collection.ServerStudyGroup;
-
 import exceptions.CommandIsNotExistException;
 import general.AbstractCommand;
 import general.Command;
@@ -31,9 +30,9 @@ public class ServerCommandReaderImpl implements ServerCommandReader {
      */
     @Override
     public void executeCommand(String userCommand, ServerStudyGroup studyGroup) throws CommandIsNotExistException {
-        if (userCommand == null) {
+        if (userCommand == null)
             throw new CommandIsNotExistException("Данной команды не существует");
-        }
+
         String[] split = userCommand.trim().toLowerCase().split("\\s+", 3);
         if (split[1].equals("null"))
             split[1] = null;
@@ -51,9 +50,9 @@ public class ServerCommandReaderImpl implements ServerCommandReader {
 
     @Override
     public void executeServerCommand(String userCommand) throws CommandIsNotExistException {
-        if (userCommand == null) {
+        if (userCommand == null)
             throw new CommandIsNotExistException("Данной серверной команды не существует");
-        }
+
         userCommand = userCommand.toLowerCase().trim();
         ServerCommand command = serverCommandMap.get(userCommand);
         if (command != null)
@@ -81,16 +80,6 @@ public class ServerCommandReaderImpl implements ServerCommandReader {
     @Override
     public HashMap<String, AbstractCommand> getCommandMap() {
         return commandMap;
-    }
-
-    @Override
-    public HashMap<String, ServerCommand> getServerCommandMap() {
-        return serverCommandMap;
-    }
-
-    @Override
-    public boolean isStudyGroupCommand(Command command) {
-        return command.isStudyGroupCommand();
     }
 
     @Override

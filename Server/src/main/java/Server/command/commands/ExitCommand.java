@@ -1,6 +1,7 @@
-package Server.commands;
+package Server.command.commands;
 
 
+import Server.command.ServerCommand;
 import Server.server.Server;
 import Server.server.ServerApp;
 

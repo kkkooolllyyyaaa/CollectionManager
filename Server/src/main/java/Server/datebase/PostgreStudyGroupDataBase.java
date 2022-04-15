@@ -54,18 +54,6 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
     }
 
     @Override
-    public boolean deleteStudyGroups() {
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement("truncate studygroups")) {
-            statement.execute();
-            return true;
-        } catch (SQLException unknownError) {
-            unknownError.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
     public boolean deleteStudyGroupsOfUser(User user) throws SQLNoDataException {
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM studygroups WHERE username = ?")) {

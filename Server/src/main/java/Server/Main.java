@@ -1,9 +1,9 @@
-package Server.server;
+package Server;
 
 
 import Server.collection.CollectionManager;
 import Server.collection.CollectionManagerImpl;
-import Server.commands.ServerCommandReaderImpl;
+import Server.command.ServerCommandReaderImpl;
 import Server.connection.ServerConnectionManagerImpl;
 import Server.connection.request.RequestHandler;
 import Server.connection.request.RequestHandlerImpl;
@@ -14,11 +14,13 @@ import Server.connection.response.ResponseCreatorImpl;
 import Server.connection.response.ResponseSender;
 import Server.connection.response.ResponseSenderImpl;
 import Server.datebase.*;
+import Server.server.Server;
+import Server.server.ServerApp;
 import Server.user_manager.UserManager;
 import Server.user_manager.UserManagerImpl;
-import general.IOImpl;
+import general.IO;
 import validation.StudyGroupBuilder;
-import validation.StudyGroupBuilderImpl;
+import validation.StudyGroupBuilderFunctional;
 import validation.StudyGroupValidatorImpl;
 
 public class Main {
@@ -27,7 +29,7 @@ public class Main {
             try {
                 DataBaseConnector.init();
                 ResponseCreator responseCreator = new ResponseCreatorImpl();
-                StudyGroupBuilder builder = new StudyGroupBuilderImpl(IOImpl.reader, false, new StudyGroupValidatorImpl());
+                StudyGroupBuilder builder = new StudyGroupBuilderFunctional(IO.getReader(), false, new StudyGroupValidatorImpl());
                 StudyGroupDataBase studyGroupDataBase = new PostgreStudyGroupDataBase(builder);
                 UserDataBase userDataBase = new PostgreUserDataBase();
                 UserManager userManager = new UserManagerImpl(userDataBase);

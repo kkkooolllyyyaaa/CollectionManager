@@ -1,4 +1,4 @@
-package Server.commands;
+package Server.command;
 
 
 import Server.collection.ServerStudyGroup;

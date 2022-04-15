@@ -1,4 +1,4 @@
-package Server.commands;
+package Server.command;
 import Server.collection.ServerStudyGroup;
 import general.*;
 import exceptions.*;
@@ -16,11 +16,7 @@ public interface ServerCommandReader {
 
     void addServerCommand(String commandName, ServerCommand command);
 
-    boolean isStudyGroupCommand(Command command);
-
     HashMap<String, AbstractCommand> getCommandMap();
-
-    HashMap<String, ServerCommand> getServerCommandMap();
 
     AbstractCommand getCommandByName(String commandName);
 

@@ -11,7 +11,7 @@ import general.*;
 import java.io.IOException;
 import java.net.ConnectException;
 
-public class ClientAuthorizerImpl implements ClientAuthorizer, IOImpl {
+public class ClientAuthorizerFunctional implements ClientAuthorizer {
     private final ClientConnectionManager connectionManager;
     private final RequestSender requestSender;
     private final ResponseReader responseReader;
@@ -19,7 +19,7 @@ public class ClientAuthorizerImpl implements ClientAuthorizer, IOImpl {
     private String password;
     private User user;
 
-    public ClientAuthorizerImpl(ClientConnectionManager connectionManager, RequestSender requestSender, ResponseReader responseReader) {
+    public ClientAuthorizerFunctional(ClientConnectionManager connectionManager, RequestSender requestSender, ResponseReader responseReader) {
         this.connectionManager = connectionManager;
         this.requestSender = requestSender;
         this.responseReader = responseReader;
@@ -31,13 +31,13 @@ public class ClientAuthorizerImpl implements ClientAuthorizer, IOImpl {
             inputRegistrationData();
             user = new User(userName, password);
             Request request = new Request(RequestType.REGISTRATION_REQUEST, user);
-            connectionManager.openConnection(1777);
+            connectionManager.openConnection(8080);
             requestSender.sendRequest(connectionManager.getSocketChannel(), request);
             Response response = responseReader.readResponse(connectionManager.getSocketChannel());
-            println(response.getMessage());
+            IO.println(response.getMessage());
         } catch (BadPasswordException e) {
-            errPrint(e.getMessage());
-            println("Please try again");
+            IO.errPrint(e.getMessage());
+            IO.println("Please try again");
             registerClient();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -53,22 +53,22 @@ public class ClientAuthorizerImpl implements ClientAuthorizer, IOImpl {
             user = new User(userName, password);
             Client.setCurrentUser(user);
             Request request = new Request(RequestType.AUTHORIZATION_REQUEST, user);
-            connectionManager.openConnection(1777);
+            connectionManager.openConnection(8080);
             requestSender.sendRequest(connectionManager.getSocketChannel(), request);
             Response response = responseReader.readResponse(connectionManager.getSocketChannel());
             if (!response.getResponseType().equals(ResponseType.ERROR_RESPONSE)) {
-                println(response.getMessage());
+                IO.println(response.getMessage());
             } else {
-                println(response.getMessage());
+                IO.println(response.getMessage());
             }
         } catch (BadPasswordException e) {
-            errPrint(e.getMessage());
-            println("Please try again");
+            IO.errPrint(e.getMessage());
+            IO.println("Please try again");
             authorizeUser();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (ConnectException e) {
-            println("Server is unavailable");
+            IO.println("Server is unavailable");
             System.exit(0);
         } finally {
             connectionManager.closeConnection();
@@ -76,10 +76,10 @@ public class ClientAuthorizerImpl implements ClientAuthorizer, IOImpl {
     }
 
     private void inputRegistrationData() throws BadPasswordException, IOException {
-        println("Input username: ");
-        userName = readLine();
-        println("Input password: ");
-        password = readPassword();
+        IO.println("Input username: ");
+        userName = IO.readLine();
+        IO.println("Input password: ");
+        password = IO.readPassword();
         if (userName.length() < 4 || userName.length() > 30 || password.length() < 8 || password.length() > 30) {
             String exceptionString = "";
             if (password.length() < 8 || password.length() > 30)

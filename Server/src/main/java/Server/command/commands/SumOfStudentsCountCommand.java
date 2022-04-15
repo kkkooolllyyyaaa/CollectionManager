@@ -1,4 +1,4 @@
-package Server.commands;
+package Server.command.commands;
 
 import Server.collection.CollectionManager;
 import general.AbstractCommand;

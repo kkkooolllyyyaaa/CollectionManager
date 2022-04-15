@@ -20,6 +20,4 @@ public interface RequestCreator {
         request.setStudyGroup(studyGroup);
         return request;
     }
-
-
 }

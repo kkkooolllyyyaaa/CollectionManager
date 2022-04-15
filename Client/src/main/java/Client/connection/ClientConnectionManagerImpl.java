@@ -8,7 +8,6 @@ public class ClientConnectionManagerImpl implements ClientConnectionManager {
     private SocketChannel socketChannel;
 
     public SocketChannel openConnection(int port) throws IOException {
-//        socketChannel = SocketChannel.open(new InetSocketAddress(port));
         socketChannel = SocketChannel.open(new InetSocketAddress("localhost", port));
         return socketChannel;
     }

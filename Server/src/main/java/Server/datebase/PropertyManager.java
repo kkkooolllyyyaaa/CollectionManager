@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public class PropertyManager {
     private final static String propertyFile = "app.properties";
-    private final static String localPropertyFile = "/Users/tsypk/IdeaProjects/Programming/MultiModuleLab7Copy/MultiModuleLab7/Server/src/main/resources";
+    private final static String localPropertyFile = "/Users/tsypk/IdeaProjects/Programming/Lab7/Server/src/main/resources/";
 
     public static String getProperty(String propertyName) {
         Properties properties = new Properties();

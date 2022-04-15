@@ -2,11 +2,10 @@ package Client.commands;
 
 
 import general.AbstractCommand;
-import general.IOImpl;
 
 import java.util.TreeMap;
 
-public class ClientHelpCommand extends AbstractCommand implements IOImpl {
+public class ClientHelpCommand extends AbstractCommand {
     private final ClientCommandReader reader;
 
     public ClientHelpCommand(ClientCommandReader reader) {

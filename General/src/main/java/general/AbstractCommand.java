@@ -1,6 +1,5 @@
 package general;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**

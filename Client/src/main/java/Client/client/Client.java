@@ -8,7 +8,7 @@ import Client.connection.response.ResponseReader;
 import exceptions.CommandIsNotExistException;
 import general.*;
 import validation.StudyGroupBuilder;
-import validation.StudyGroupBuilderImpl;
+import validation.StudyGroupBuilderFunctional;
 import validation.StudyGroupValidatorImpl;
 
 import java.io.IOException;
@@ -18,9 +18,11 @@ import java.nio.BufferOverflowException;
 import java.nio.channels.SocketChannel;
 import java.util.NoSuchElementException;
 
+import static general.IO.getReader;
 
-public class Client implements ClientApp, IOImpl {
-    private final ClientCommandReaderImpl commandReader;
+
+public class Client implements ClientApp {
+    private final ClientCommandReaderFunctional commandReader;
     private final ClientConnectionManager connectionManager;
     private final RequestSender requestSender;
     private final ResponseReader responseReader;
@@ -30,7 +32,7 @@ public class Client implements ClientApp, IOImpl {
     private static User currentUser;
     private boolean isRunning;
 
-    public Client(ClientCommandReaderImpl commandReader,
+    public Client(ClientCommandReaderFunctional commandReader,
                   ClientConnectionManager connectionManager,
                   RequestSender requestSender,
                   ResponseReader responseReader,
@@ -42,7 +44,7 @@ public class Client implements ClientApp, IOImpl {
         this.responseReader = responseReader;
         this.authorizer = authorizer;
         this.port = port;
-        studyGroupBuilder = new StudyGroupBuilderImpl(getReader(), false, new StudyGroupValidatorImpl());
+        studyGroupBuilder = new StudyGroupBuilderFunctional(getReader(), false, new StudyGroupValidatorImpl());
         isRunning = true;
         addCommands();
     }
@@ -50,32 +52,30 @@ public class Client implements ClientApp, IOImpl {
     /**
      * Метод начинает работу программы клиента
      * Обеспечивает ввод пользователя и контролирует общение с сервером
-     *
-     * @param port
      */
     @Override
     public void start(int port) {
         while (isRunning) {
             String inputString = "";
             try {
-                inputString = readLine().trim();
+                inputString = IO.readLine().trim();
                 commandReader.executeCommand(inputString, null);
             } catch (CommandIsNotExistException e) {
                 try {
                     Response response = communicateWithServer(inputString);
                     if (response == null) {
-                        println("Response wasn't received, wait until the server is available");
+                        IO.println("Response wasn't received, wait until the server is available");
                         return;
                     }
-                    println(response.getMessage());
+                    IO.println(response.getMessage());
                 } catch (IOException | ClassNotFoundException ioException) {
                     ioException.printStackTrace();
                 }
             } catch (NoSuchElementException | NullPointerException e) {
-                errPrint("You can't input this\nThe work of Client will be stopped");
+                IO.errPrint("You can't input this\nThe work of Client will be stopped");
                 return;
             } catch (IOException e) {
-                errPrint(e.getMessage());
+                IO.errPrint(e.getMessage());
                 return;
             }
         }
@@ -94,8 +94,6 @@ public class Client implements ClientApp, IOImpl {
      *
      * @param inputString ввод пользователя
      * @return Response - ответ сервера
-     * @throws IOException
-     * @throws ClassNotFoundException
      */
     public Response communicateWithServer(String inputString) throws IOException, ClassNotFoundException {
         String[] commandAndArgument = inputString.trim().split("\\s", 2);
@@ -103,7 +101,7 @@ public class Client implements ClientApp, IOImpl {
         try {
             socketChannel = connectionManager.openConnection(port);
         } catch (ConnectException e) {
-            println("Server is unavailable");
+            IO.println("Server is unavailable");
             return null;
         }
         Request request = requestSender.createBasicRequest(commandAndArgument[0]);
@@ -120,7 +118,7 @@ public class Client implements ClientApp, IOImpl {
         connectionManager.closeConnection();
         if (response == null) {
             exit();
-            println("Connection refused");
+            IO.println("Connection refused");
             return null;
         } else if (response.getResponseType().equals(ResponseType.STUDY_GROUP_RESPONSE)) {
             request.setUser(currentUser);
@@ -131,11 +129,7 @@ public class Client implements ClientApp, IOImpl {
 
     /**
      * Отправляет запрос серверу, вместе с элементом коллекции
-     *
-     * @param request
      * @return Response - ответ сервера
-     * @throws IOException
-     * @throws ClassNotFoundException
      */
     private Response reCommunicateWithServer(Request request) throws IOException, ClassNotFoundException {
         String arg = request.getArg();

@@ -1,7 +1,7 @@
 package Server.connection.request;
 
 import Server.collection.CollectionManager;
-import Server.commands.ServerCommandReader;
+import Server.command.ServerCommandReader;
 import Server.connection.response.ResponseCreator;
 import Server.user_manager.UserManager;
 import exceptions.BadPasswordException;

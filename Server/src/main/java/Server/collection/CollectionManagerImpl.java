@@ -37,7 +37,6 @@ public final class CollectionManagerImpl implements CollectionManager {
         this.responseCreator = responseCreator;
         this.dataBase = dataBase;
         try {
-            dataBase.deleteStudyGroupById(4);
             CopyOnWriteArrayList<ServerStudyGroup> serverStudyGroups = dataBase.getAll();
             studyGroups.addAll(serverStudyGroups);
             initOwners();

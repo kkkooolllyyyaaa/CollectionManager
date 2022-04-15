@@ -1,5 +1,6 @@
-package Server.commands;
+package Server.command.commands;
 
+import Server.command.ServerCommandReader;
 import Server.connection.response.ResponseCreator;
 import general.AbstractCommand;
 import general.LimitedQueue;
