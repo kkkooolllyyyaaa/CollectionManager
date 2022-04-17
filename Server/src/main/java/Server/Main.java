@@ -26,36 +26,44 @@ import validation.StudyGroupValidatorImpl;
 
 public class Main {
     public static void main(String[] args) {
-        if (args.length == 1) {
-            try {
-                DataBaseConnector.init();
-                ResponseCreator responseCreator = new ResponseCreatorImpl();
-                StudyGroupBuilder builder = new StudyGroupBuilderImpl(IO.getReader(), false, new StudyGroupValidatorImpl());
-                StudyGroupDataBase studyGroupDataBase = new PostgreStudyGroupDataBase(builder);
-                UserDataBase userDataBase = new PostgreUserDataBase();
-                UserManager userManager = new UserManagerImpl(userDataBase);
-                CollectionManager collectionManager = new CollectionManagerImpl(responseCreator, studyGroupDataBase);
-                ServerCommandReaderImpl commandReader = new ServerCommandReaderImpl();
-                ServerConnectionManagerImpl connectionManager = new ServerConnectionManagerImpl();
-                RequestReader requestReader = new RequestReaderImpl();
-                ResponseSender responseSender = new ResponseSenderImpl();
-                RequestHandler requestHandler = new RequestHandlerImpl(userManager, commandReader, collectionManager, responseCreator);
-                ServerApp server = new Server(
-                        collectionManager,
-                        commandReader,
-                        connectionManager,
-                        responseCreator,
-                        requestReader,
-                        requestHandler,
-                        responseSender,
-                        Integer.parseInt(args[0]));
+        if (args.length != 1) {
+            IO.errPrint("Input arguments: [port]");
+            return;
+        }
 
-                server.start();
+        try {
+            StudyGroupBuilder builder = new StudyGroupBuilderImpl(IO.getReader(),
+                    false, new StudyGroupValidatorImpl());
 
-            } catch (NumberFormatException | SQLNoDataException e) {
-                System.out.println(e.getMessage());
-            }
-        } else
-            System.out.println("Input arguments: port");
+            DataBaseConnector.init();
+            StudyGroupDataBase studyGroupDataBase = new PostgreStudyGroupDataBase(builder);
+            UserDataBase userDataBase = new PostgreUserDataBase();
+
+            ResponseCreator responseCreator = new ResponseCreatorImpl();
+
+            UserManager userManager = new UserManagerImpl(userDataBase);
+            CollectionManager collectionManager = new CollectionManagerImpl(responseCreator, studyGroupDataBase);
+
+            ServerCommandReaderImpl commandReader = new ServerCommandReaderImpl();
+            RequestHandler requestHandler = new RequestHandlerImpl(userManager, commandReader, collectionManager, responseCreator);
+
+            ServerConnectionManagerImpl connectionManager = new ServerConnectionManagerImpl();
+            RequestReader requestReader = new RequestReaderImpl();
+            ResponseSender responseSender = new ResponseSenderImpl();
+            ServerApp server = new Server(
+                    collectionManager,
+                    commandReader,
+                    connectionManager,
+                    responseCreator,
+                    requestReader,
+                    requestHandler,
+                    responseSender,
+                    Integer.parseInt(args[0])
+            );
+
+            server.start();
+        } catch (NumberFormatException | SQLNoDataException e) {
+            IO.errPrint(e.getMessage());
+        }
     }
 }
