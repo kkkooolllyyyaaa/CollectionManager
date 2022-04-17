@@ -28,7 +28,7 @@ public class RequestReaderImpl implements RequestReader {
     private byte[] readBytes() throws IOException {
         int capacity = 16384;
         ByteBuffer buf = ByteBuffer.allocate(capacity);
-        int bytesRead = socketChannel.read(buf);
+        socketChannel.read(buf);
         return buf.array();
     }
 

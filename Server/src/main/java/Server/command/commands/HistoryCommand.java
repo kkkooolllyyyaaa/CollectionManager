@@ -19,7 +19,7 @@ public class HistoryCommand extends AbstractCommand {
     public void execute(String[] args) {
         LimitedQueue<String> history = serverCommandReader.getHistory();
         responseCreator.addToMsg("The list of last 5 commands:");
-        for (Object hstr : history)
-            responseCreator.addToMsg(((String) hstr).trim());
+        for (String command : history)
+            responseCreator.addToMsg(command);
     }
 }

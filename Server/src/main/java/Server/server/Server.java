@@ -122,12 +122,12 @@ public class Server implements ServerApp {
         commandReader.addCommand("info", new InfoCommand(collectionManager));
         commandReader.addCommand("print_ascending", new PrintAscendingCommand(collectionManager, responseCreator));
         commandReader.addCommand("remove_by_id", new RemoveByIdCommand(collectionManager, responseCreator));
-        commandReader.addCommand("remove_first", new RemoveFirstCommand(collectionManager));
-        commandReader.addCommand("remove_greater", new RemoveGreaterCommand(collectionManager));
+        commandReader.addCommand("remove_first", new RemoveFirstCommand(collectionManager, responseCreator));
+        commandReader.addCommand("remove_greater", new RemoveGreaterCommand(collectionManager, responseCreator));
         commandReader.addCommand("show", new ShowCommand(collectionManager, responseCreator));
         commandReader.addCommand("show_full", new ShowFullCommand(collectionManager, responseCreator));
         commandReader.addCommand("show_mine", new ShowMineCommand(collectionManager, responseCreator));
-        commandReader.addCommand("sum_of_students_count", new SumOfStudentsCountCommand(collectionManager));
+        commandReader.addCommand("sum_of_students_count", new SumOfStudentsCountCommand(collectionManager, responseCreator));
         commandReader.addCommand("update", new UpdateCommand(collectionManager, responseCreator));
         commandReader.addCommand("help", new HelpCommand(commandReader.getCommandMap(), responseCreator));
         commandReader.addCommand("my_ids", new MyIdsCommand(collectionManager, responseCreator));

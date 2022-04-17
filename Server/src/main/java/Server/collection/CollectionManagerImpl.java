@@ -64,60 +64,6 @@ public final class CollectionManagerImpl implements CollectionManager {
         locker.unlock();
     }
 
-    /**
-     * Метод, отвечающий за подсчет количества всех студентов
-     */
-    @Override
-    public void sumOfStudentsCount() {
-        long sum = studyGroups.stream().mapToInt(ServerStudyGroup::getStudentsCount).sum();
-        responseCreator.addToMsg("Всего студентов: " + sum);
-    }
-
-    /**
-     * Метод, отвевающий за удаление первого элемента коллекции
-     */
-    @Override
-    public void removeFirstElement(String username) {
-        locker.lock();
-        try {
-            ServerStudyGroup sg = studyGroups.stream().
-                    filter(x -> x.getUsername().equals(username)).findFirst().orElse(null);
-
-            removeById(sg.getId(), username);
-            owners.get(username).remove(sg.getId());
-        } catch (Exception e) {
-            responseCreator.addToMsg("There is no any your element");
-        } finally {
-            locker.unlock();
-        }
-    }
-
-    /**
-     * Метод, отвечающий за удаление элементов, превышающий заданный (по studentsCount)
-     */
-    @Override
-    public void removeGreater(ServerStudyGroup studyGroup, String username) {
-        int cnt = 0;
-
-        locker.lock();
-
-        for (ServerStudyGroup st : studyGroups) {
-            if (isOwner(st.getId(), username)) {
-                if (st.getStudentsCount() > studyGroup.getStudentsCount()) {
-                    try {
-                        removeById(st.getId(), username);
-                        owners.get(username).remove(st.getId());
-                        cnt++;
-                    } catch (NotOwnerException unexpected) {
-                        unexpected.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        locker.unlock();
-        responseCreator.addToMsg(cnt + " elements removed at all");
-    }
 
     /**
      * Метод, отвечающий за удаление элемента коллекции по id

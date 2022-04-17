@@ -11,15 +11,9 @@ import java.util.LinkedList;
 public interface CollectionManager {
     void clear(String username);
 
-    void removeGreater(ServerStudyGroup studyGroup, String username);
-
-    void removeFirstElement(String username);
-
     void removeById(long id, String username) throws NotOwnerException;
 
     void update(long id, ServerStudyGroup studyGroup);
-
-    void sumOfStudentsCount();
 
     void addElement(ServerStudyGroup studyGroup) throws InsertException;
 

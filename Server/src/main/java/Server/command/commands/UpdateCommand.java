@@ -25,13 +25,12 @@ public class UpdateCommand extends AbstractCommand implements StudyGroupCommand 
 
     @Override
     public void execute(String[] args, ServerStudyGroup studyGroup) {
-        long id;
         if (args.length != 3)
             throw new RuntimeException("Неизвестная ошибка, не найдены все аргументы команды!");
         else if (args[1] == null)
             responseCreator.addToMsg("Не указан id");
         else if (InputChecker.checkLong(args[1].trim())) {
-            id = Long.parseLong(args[1]);
+            long id = Long.parseLong(args[1]);
             if (collectionManager.containsId(id)) {
                 collectionManager.update(id, studyGroup);
             } else

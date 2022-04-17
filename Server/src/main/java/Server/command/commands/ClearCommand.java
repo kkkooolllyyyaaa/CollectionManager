@@ -15,6 +15,5 @@ public class ClearCommand extends AbstractCommand {
     @Override
     public void execute(String[] args) {
         collectionManager.clear(args[2]);
-
     }
 }
