@@ -8,18 +8,16 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.Callable;
 
 public class ReadThread implements Callable<Request> {
-    private final SocketChannel socketChannel;
     private final RequestReader reader;
 
-    public ReadThread(SocketChannel socketChannel, RequestReader reader) {
-        this.socketChannel = socketChannel;
+    public ReadThread(RequestReader reader) {
         this.reader = reader;
     }
 
     @Override
     public Request call() {
         try {
-            return reader.readRequest(socketChannel);
+            return reader.readRequest();
         } catch (IOException | ClassNotFoundException ioException) {
             ioException.printStackTrace();
             return null;

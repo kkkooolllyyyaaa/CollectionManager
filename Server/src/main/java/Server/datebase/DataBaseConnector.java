@@ -24,6 +24,8 @@ public class DataBaseConnector {
     private static String dbPassword;
     private static Connection con;
 
+    private static Session session;
+
     public static void connect() {
         try {
             con = DriverManager.getConnection("jdbc:postgresql://localhost:" + localPort + "/studs", dbUser, dbPassword);
@@ -32,15 +34,19 @@ public class DataBaseConnector {
         }
     }
 
-    public static void init(){
+    public static void init() {
         initFields();
         doSshTunnel();
+    }
+
+    public static void disconnect() {
+        session.disconnect();
     }
 
     private static void doSshTunnel() {
         try {
             JSch jsch = new JSch();
-            Session session = jsch.getSession(sshUser, sshHost, sshPort);
+            session = jsch.getSession(sshUser, sshHost, sshPort);
             session.setPassword(sshPassword);
             Properties config = new Properties();
             config.put("StrictHostKeyChecking", "no");

@@ -11,9 +11,14 @@ import java.nio.channels.SocketChannel;
 public class ResponseSenderImpl implements ResponseSender {
     private SocketChannel socketChannel;
 
-    public void sendResponse(SocketChannel socketChannel, Response response) throws IOException {
-        this.socketChannel = socketChannel;
+    @Override
+    public void sendResponse(Response response) throws IOException {
         sendBytes(serializeResponse(response));
+    }
+
+    @Override
+    public void setSocket(SocketChannel socketChannel) {
+        this.socketChannel = socketChannel;
     }
 
     private void sendBytes(byte[] bytes) throws IOException {

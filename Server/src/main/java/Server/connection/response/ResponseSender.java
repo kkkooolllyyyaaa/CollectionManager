@@ -6,5 +6,8 @@ import java.io.IOException;
 import java.nio.channels.SocketChannel;
 
 public interface ResponseSender {
-    void sendResponse(SocketChannel socketChannel, Response response) throws IOException;
+
+    void setSocket(SocketChannel socketChannel);
+
+    void sendResponse(Response response) throws IOException;
 }

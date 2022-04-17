@@ -7,22 +7,18 @@ import general.IO;
 import general.Request;
 import general.Response;
 
-import java.nio.channels.SocketChannel;
 import java.util.concurrent.*;
 
-public class ThreadProcessorFunctional implements ThreadProcessor {
+public class ThreadProcessorImpl implements ThreadProcessor {
     private final RequestReader requestReader;
     private final RequestHandler requestHandler;
     private final ResponseSender responseSender;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
-    private final SocketChannel socketChannel;
 
-    public ThreadProcessorFunctional(RequestReader requestReader, RequestHandler requestHandler, ResponseSender responseSender, SocketChannel socketChannel) {
+    public ThreadProcessorImpl(RequestReader requestReader, RequestHandler requestHandler, ResponseSender responseSender) {
         this.requestReader = requestReader;
         this.requestHandler = requestHandler;
         this.responseSender = responseSender;
-        this.socketChannel = socketChannel;
-
     }
 
     @Override
@@ -33,7 +29,7 @@ public class ThreadProcessorFunctional implements ThreadProcessor {
     @Override
     public void process() {
         try {
-            Callable<Request> callable1 = new ReadThread(socketChannel, requestReader);
+            Callable<Request> callable1 = new ReadThread(requestReader);
             FutureTask<Request> futureTask1 = new FutureTask<>(callable1);
             IO.println("Reading request...");
             Thread readThread = new Thread(futureTask1);
@@ -51,12 +47,12 @@ public class ThreadProcessorFunctional implements ThreadProcessor {
             IO.println(request.getCommandName() + " request from " + username + " handled");
 
             IO.println("Sending response...");
-            new Thread(new SendThread(responseSender, socketChannel, response)).start();
+            new Thread(new SendThread(responseSender, response)).start();
             IO.println("Response send\n");
-
         } catch (InterruptedException | ExecutionException e) {
-            shutDownExecutorServices();
             e.printStackTrace();
+        } finally {
+            shutDownExecutorServices();
         }
     }
 

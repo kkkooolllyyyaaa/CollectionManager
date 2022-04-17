@@ -14,6 +14,7 @@ import validation.StudyGroupValidatorImpl;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.net.ConnectException;
+import java.net.SocketException;
 import java.nio.BufferOverflowException;
 import java.nio.channels.SocketChannel;
 import java.util.NoSuchElementException;
@@ -119,6 +120,9 @@ public class Client implements ClientApp {
             errPrint("Server data is too big for buffer");
         } catch (StreamCorruptedException e) {
             errPrint("Server is unavailable now");
+            exit();
+        } catch (SocketException e) {
+            errPrint("Connection is refused, the work will stop");
             exit();
         }
         connectionManager.closeConnection();

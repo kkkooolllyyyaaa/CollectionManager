@@ -7,5 +7,8 @@ import java.io.IOException;
 import java.nio.channels.SocketChannel;
 
 public interface RequestReader {
-    Request readRequest(SocketChannel socketChannel) throws IOException, ClassNotFoundException;
+    void setSocket(SocketChannel socketChannel);
+
+    Request readRequest() throws IOException, ClassNotFoundException;
+
 }

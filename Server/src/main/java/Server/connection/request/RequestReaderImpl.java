@@ -14,8 +14,12 @@ public class RequestReaderImpl implements RequestReader {
     private SocketChannel socketChannel;
 
     @Override
-    public Request readRequest(SocketChannel socketChannel) throws IOException, ClassNotFoundException {
+    public void setSocket(SocketChannel socketChannel) {
         this.socketChannel = socketChannel;
+    }
+
+    @Override
+    public Request readRequest() throws IOException, ClassNotFoundException {
         byte[] bytes;
         try {
             bytes = readBytes();

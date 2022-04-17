@@ -9,8 +9,9 @@ import Server.connection.request.RequestHandler;
 import Server.connection.request.RequestReader;
 import Server.connection.response.ResponseCreator;
 import Server.connection.response.ResponseSender;
+import Server.datebase.DataBaseConnector;
 import Server.server.runnable.ThreadProcessor;
-import Server.server.runnable.ThreadProcessorFunctional;
+import Server.server.runnable.ThreadProcessorImpl;
 import exceptions.CommandIsNotExistException;
 import general.IO;
 
@@ -28,7 +29,9 @@ public class Server implements ServerApp {
     private final RequestHandler requestHandler;
     private final ResponseSender responseSender;
     private final int port;
+
     private boolean isRunning = true;
+    private ThreadProcessor threadProcessor;
 
 
     public Server(CollectionManager collectionManager,
@@ -64,12 +67,20 @@ public class Server implements ServerApp {
         while (isRunning) {
             try {
                 SocketChannel socketChannel = serverSocketChannel.accept();
-                if (socketChannel != null) {
-                    ThreadProcessor threadProcessor = new ThreadProcessorFunctional(requestReader, requestHandler, responseSender, socketChannel);
-                    new Thread(threadProcessor).start();
-                }
+                if (socketChannel == null)
+                    continue;
+
+                initConnection(socketChannel);
+                threadProcessor = new ThreadProcessorImpl(
+                        requestReader,
+                        requestHandler,
+                        responseSender
+                );
+
+                Thread clientThread = new Thread(threadProcessor);
+                clientThread.start();
             } catch (IOException e) {
-                IO.println("Server is stop working");
+                IO.println("Server stop work");
                 exit();
             }
         }
@@ -81,8 +92,10 @@ public class Server implements ServerApp {
      */
     @Override
     public void exit() {
+        DataBaseConnector.disconnect();
+        if (threadProcessor != null)
+            threadProcessor.shutDownExecutorServices();
         isRunning = false;
-        System.exit(0);
     }
 
     /**
@@ -150,5 +163,10 @@ public class Server implements ServerApp {
         addServerCommands();
         addCommands();
         startConsoleDaemon(commandReader);
+    }
+
+    private void initConnection(SocketChannel socketChannel) {
+        requestReader.setSocket(socketChannel);
+        responseSender.setSocket(socketChannel);
     }
 }
