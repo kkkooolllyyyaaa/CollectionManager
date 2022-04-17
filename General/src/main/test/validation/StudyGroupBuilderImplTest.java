@@ -6,6 +6,8 @@ import general.IO;
 import general.Semester;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,16 +21,17 @@ class StudyGroupBuilderImplTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", "firs", "eleventh", "SECONDD"})
+    @ValueSource(strings = {" ", "firs", "eleventh", "SECONDD"})
+    @EmptySource
     void checkSemesterDoesNotExist(String value) {
         assertThrows(EnumNotFoundException.class,
                 () -> builder.checkSemester(value));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"FIRST", "SECOND", "FOURTH", "SIXTH", "SEVENTH"})
-    void checkSemesterExists(String value) {
-        Semester semester = assertDoesNotThrow(() -> builder.checkSemester(value));
+    @EnumSource(Semester.class)
+    void checkSemesterExists(Semester value) {
+        Semester semester = assertDoesNotThrow(() -> builder.checkSemester(value.getStr()));
         assertNotNull(semester);
     }
 
@@ -40,7 +43,8 @@ class StudyGroupBuilderImplTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", "distance_educationn", "bad_education", "EVENING__CLASSes"})
+    @ValueSource(strings = {" ", "distance_educationn", "bad_education", "EVENING__CLASSes"})
+    @EmptySource
     void checkFormOfEducationDoesNotExist(String value) {
         assertThrows(EnumNotFoundException.class,
                 () -> builder.checkFormOfEducation(value));
@@ -48,9 +52,9 @@ class StudyGroupBuilderImplTest {
 
 
     @ParameterizedTest
-    @ValueSource(strings = {"DISTANCE_EDUCATION", "FULL_TIME_EDUCATION", "EVENING_CLASSES"})
-    void checkFormOfEducationExists(String value) {
-        FormOfEducation form = assertDoesNotThrow(() -> builder.checkFormOfEducation(value));
+    @EnumSource(FormOfEducation.class)
+    void checkFormOfEducationExists(FormOfEducation value) {
+        FormOfEducation form = assertDoesNotThrow(() -> builder.checkFormOfEducation(value.getStr()));
         assertNotNull(form);
     }
 

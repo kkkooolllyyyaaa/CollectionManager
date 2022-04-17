@@ -18,6 +18,7 @@ import Server.server.Server;
 import Server.server.ServerApp;
 import Server.user_manager.UserManager;
 import Server.user_manager.UserManagerImpl;
+import exceptions.SQLNoDataException;
 import general.IO;
 import validation.StudyGroupBuilder;
 import validation.StudyGroupBuilderImpl;
@@ -51,7 +52,7 @@ public class Main {
 
                 server.start();
 
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException | SQLNoDataException e) {
                 System.out.println(e.getMessage());
             }
         } else

@@ -4,10 +4,14 @@ import Server.collection.ServerStudyGroup;
 import exceptions.EnumNotFoundException;
 import exceptions.InvalidFieldException;
 import exceptions.SQLNoDataException;
-import general.User;
+import exceptions.SQLUniqueException;
+import general.IO;
 import validation.StudyGroupBuilder;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -43,25 +47,26 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
     }
 
     @Override
-    public void insertStudyGroup(ServerStudyGroup studyGroup) throws Exception {
+    public void insertStudyGroup(ServerStudyGroup studyGroup) throws SQLUniqueException {
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO studygroups VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
             initStatement(statement, studyGroup);
             statement.execute();
-        } catch (SQLException sqlEx) {
-            throw new Exception(sqlEx.getMessage());
+        } catch (SQLException e) {
+            throw new SQLUniqueException();
         }
     }
 
     @Override
-    public boolean deleteStudyGroupsOfUser(User user) throws SQLNoDataException {
+    public boolean deleteStudyGroupsOfUser(String username) {
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM studygroups WHERE username = ?")) {
-            statement.setString(1, user.getUserName());
+            statement.setString(1, username);
             statement.execute();
             return true;
         } catch (SQLException e) {
-            throw new SQLNoDataException();
+            IO.errPrint(e.getMessage());
+            return false;
         }
     }
 
@@ -73,7 +78,7 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
             statement.execute();
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            IO.errPrint(e.getMessage());
             return false;
         }
     }
@@ -151,8 +156,8 @@ public class PostgreStudyGroupDataBase implements StudyGroupDataBase {
         statement.setDouble(3, studyGroup.getCoordinates().getY());
         statement.setString(4, studyGroup.getCreationDate().toString());
         statement.setInt(5, studyGroup.getStudentsCount());
-        statement.setString(6, studyGroup.getFormOfEducation().getUrl());
-        statement.setString(7, studyGroup.getSemesterEnum().getUrl());
+        statement.setString(6, studyGroup.getFormOfEducation().getStr());
+        statement.setString(7, studyGroup.getSemesterEnum().getStr());
         statement.setString(8, studyGroup.getGroupAdmin().getName());
         statement.setString(9, studyGroup.getGroupAdmin().getPassportID());
         statement.setLong(10, studyGroup.getGroupAdmin().getLocation().getX());

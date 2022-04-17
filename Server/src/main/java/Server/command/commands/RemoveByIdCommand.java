@@ -19,13 +19,12 @@ public class RemoveByIdCommand extends AbstractCommand {
 
     @Override
     public void execute(String[] args) {
-        long id;
         if (args.length != 3)
             throw new RuntimeException("Неизвестная ошибка, не найдены все аргументы команды!");
         else if (args[1] == null)
             responseCreator.addToMsg("Не указан id");
         else if (InputChecker.checkLong(args[1].trim())) {
-            id = Long.parseLong(args[1]);
+            long id = Long.parseLong(args[1]);
             if (collectionManager.containsId(id)) {
                 try {
                     collectionManager.removeById(id, args[2]);

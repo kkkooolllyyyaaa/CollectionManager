@@ -13,7 +13,7 @@ public interface StudyGroupDataBase {
 
     void insertStudyGroup(ServerStudyGroup studyGroup) throws Exception;
 
-    boolean deleteStudyGroupsOfUser(User user) throws SQLNoDataException;
+    boolean deleteStudyGroupsOfUser(String username);
 
     boolean deleteStudyGroupById(long id);
 

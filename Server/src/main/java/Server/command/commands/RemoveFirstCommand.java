@@ -14,6 +14,8 @@ public class RemoveFirstCommand extends AbstractCommand {
 
     @Override
     public void execute(String[] args) {
+        if (args.length != 3)
+            throw new RuntimeException("Неизвестная ошибка, не найдены все аргументы команды!");
         collectionManager.removeFirstElement(args[2]);
     }
 }

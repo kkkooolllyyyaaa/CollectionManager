@@ -1,12 +1,11 @@
 package Server.collection;
 
 
-import Server.connection.response.ResponseCreator;
+import exceptions.InsertException;
 import exceptions.NotOwnerException;
-import general.Semester;
 import general.StudyGroup;
 
-import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public interface CollectionManager {
@@ -22,23 +21,18 @@ public interface CollectionManager {
 
     void sumOfStudentsCount();
 
-    void countLessThanSemesterEnum(Semester semester);
-
-    void addElement(ServerStudyGroup studyGroup);
+    void addElement(ServerStudyGroup studyGroup) throws InsertException;
 
     void info();
 
-    ZonedDateTime getInitializationTime();
-
     boolean containsId(long id);
 
-    LinkedList<ServerStudyGroup> getStudyGroups();
-
-    ServerStudyGroup getServerStudyGroup(StudyGroup studyGroup);
-
-    ResponseCreator getResponseCreator();
+    LinkedList<ServerStudyGroup> getStudyGroupsSortedById();
 
     LinkedList<ServerStudyGroup> getStudyGroupsSortedByUsername();
 
+    ServerStudyGroup getServerStudyGroup(StudyGroup studyGroup);
+
+    HashSet<Long> getIds(String username);
 
 }

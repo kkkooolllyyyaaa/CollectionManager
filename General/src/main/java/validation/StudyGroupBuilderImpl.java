@@ -167,7 +167,7 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder {
     @Override
     public Semester checkSemester(String str) throws InvalidFieldException, EnumNotFoundException {
         for (Semester smstr : Semester.values()) {
-            if (str.equalsIgnoreCase(smstr.getUrl())) {
+            if (str.equalsIgnoreCase(smstr.getStr())) {
                 validator.validateSemester(smstr);
                 return smstr;
             }
@@ -185,7 +185,7 @@ public class StudyGroupBuilderImpl implements StudyGroupBuilder {
     @Override
     public FormOfEducation checkFormOfEducation(String str) throws InvalidFieldException, EnumNotFoundException {
         for (FormOfEducation fOE : FormOfEducation.values()) {
-            if (str.equalsIgnoreCase(fOE.getUrl())) {
+            if (str.equalsIgnoreCase(fOE.getStr())) {
                 return fOE;
             }
         }

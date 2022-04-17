@@ -24,11 +24,9 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public void insertToRegistered(User user) throws UserExistenceException {
-        for (User u : registered) {
-            if (u.equals(user)) {
-                throw new UserExistenceException("The username is already exists");
-            }
-        }
+        if (registered.contains(user))
+            throw new UserExistenceException("The username is already exists");
+
         try {
             userDataBase.insertUser(user);
             registered.add(user);
@@ -39,39 +37,33 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public void deleteFromRegistered(User user) throws UserExistenceException {
-        if (registered.contains(user)) {
-            try {
-                userDataBase.deleteUser(user);
-                registered.remove(user);
-            } catch (SQLNoDataException notExcepted) {
-                notExcepted.printStackTrace();
-            }
-        } else
+        if (!registered.contains(user))
             throw new UserExistenceException("The user is not exists");
+
+        try {
+            userDataBase.deleteUser(user);
+            registered.remove(user);
+        } catch (SQLNoDataException notExcepted) {
+            notExcepted.printStackTrace();
+        }
     }
 
     @Override
     public boolean isRegistered(User user) {
         if (user == null)
             return false;
-        for (User u : registered) {
-            if (user.getUserName().equals(u.getUserName()) && user.getPassword().equals(u.getPassword())) {
-                return true;
-            } else if (user.getUserName().equals(u.getUserName())) {
-                return false;
-            }
-        }
-        return false;
+
+        long found = registered.stream().filter(x ->
+                x.getUserName().equals(user.getUserName()) &&
+                        x.getPassword().equals(user.getPassword())).count();
+
+        return found > 0;
     }
 
     @Override
     public boolean isExist(User user) {
-        if (user == null)
-            return false;
-        for (User u : registered) {
-            if (u.getUserName().equals(user.getUserName()))
-                return true;
-        }
-        return false;
+        long found = registered.stream().filter(x -> x.getUserName().equals(user.getUserName())).count();
+
+        return found > 0;
     }
 }

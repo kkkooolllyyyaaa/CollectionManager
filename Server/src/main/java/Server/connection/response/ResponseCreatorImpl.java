@@ -20,7 +20,6 @@ public class ResponseCreatorImpl implements ResponseCreator {
 
     @Override
     public void addToMsg(String message) {
-        String last = response.getMessage();
-        response.setMessage(last + "\n" + message);
+        response.setMessage(response.getMessage() + "\n" + message);
     }
 }

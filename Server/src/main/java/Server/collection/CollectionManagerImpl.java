@@ -3,9 +3,10 @@ package Server.collection;
 
 import Server.connection.response.ResponseCreator;
 import Server.datebase.StudyGroupDataBase;
+import exceptions.InsertException;
 import exceptions.NotOwnerException;
 import exceptions.SQLNoDataException;
-import general.Semester;
+import general.IO;
 import general.StudyGroup;
 
 import java.time.ZonedDateTime;
@@ -13,7 +14,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
@@ -21,27 +21,23 @@ import java.util.stream.Collectors;
  * Класс который хранит коллекцию и совершает действия с ней
  */
 public final class CollectionManagerImpl implements CollectionManager {
-    private LinkedList<ServerStudyGroup> studyGroups;
-    private final ZonedDateTime creationDate;
     private final ResponseCreator responseCreator;
     private final StudyGroupDataBase dataBase;
-    private final HashMap<String, HashSet<Integer>> owners;
+    private final HashMap<String, HashSet<Long>> owners;
     private final ReentrantLock locker;
+    private final ZonedDateTime creationDate;
+    private LinkedList<ServerStudyGroup> studyGroups;
 
 
-    public CollectionManagerImpl(ResponseCreator responseCreator, StudyGroupDataBase dataBase) {
-        locker = new ReentrantLock();
-        studyGroups = new LinkedList<>();
-        owners = new HashMap<>();
-        creationDate = ZonedDateTime.now();
+    public CollectionManagerImpl(ResponseCreator responseCreator, StudyGroupDataBase dataBase) throws SQLNoDataException {
         this.responseCreator = responseCreator;
         this.dataBase = dataBase;
-        try {
-            CopyOnWriteArrayList<ServerStudyGroup> serverStudyGroups = dataBase.getAll();
-            studyGroups.addAll(serverStudyGroups);
-            initOwners();
-        } catch (SQLNoDataException ignored) {
-        }
+
+        owners = new HashMap<>();
+        locker = new ReentrantLock();
+        creationDate = ZonedDateTime.now();
+        studyGroups = new LinkedList<>(dataBase.getAll());
+        initOwners();
     }
 
     /**
@@ -51,18 +47,21 @@ public final class CollectionManagerImpl implements CollectionManager {
     public void clear(String username) {
         if (username == null)
             throw new RuntimeException("Non excepted error");
-        int cnt = 0;
-        for (ServerStudyGroup st : studyGroups) {
-            if (isOwner(st.getId(), username)) {
-                try {
-                    removeById(st.getId(), username);
-                    cnt++;
-                } catch (NotOwnerException unExcepted) {
-                    unExcepted.printStackTrace();
-                }
-            }
-        }
+
+        locker.lock();
+
+        if (!dataBase.deleteStudyGroupsOfUser(username))
+            responseCreator.addToMsg("Не удалось очистить коллекцию");
+
+        long cnt = studyGroups.stream().filter(x -> x.getUsername().equals(username)).count();
+        studyGroups = studyGroups.stream().
+                filter(x -> !x.getUsername().
+                        equals(username)).collect(Collectors.toCollection(LinkedList::new));
+
         responseCreator.addToMsg("Коллекция очищена, всего удалено: " + cnt + " элементов");
+        owners.remove(username);
+        newUser(username);
+        locker.unlock();
     }
 
     /**
@@ -70,8 +69,8 @@ public final class CollectionManagerImpl implements CollectionManager {
      */
     @Override
     public void sumOfStudentsCount() {
-        int id = studyGroups.stream().mapToInt(ServerStudyGroup::getStudentsCount).sum();
-        responseCreator.addToMsg("Всего студентов: " + id);
+        long sum = studyGroups.stream().mapToInt(ServerStudyGroup::getStudentsCount).sum();
+        responseCreator.addToMsg("Всего студентов: " + sum);
     }
 
     /**
@@ -79,16 +78,18 @@ public final class CollectionManagerImpl implements CollectionManager {
      */
     @Override
     public void removeFirstElement(String username) {
-        if (owners.containsKey(username) && owners.get(username).size() > 0) {
-            int firstId = owners.get(username).stream().limit(1).mapToInt(Integer1 -> Integer1).sum();
-            try {
-                removeById(firstId, username);
-            } catch (NotOwnerException unExcepted) {
-                unExcepted.printStackTrace();
-                responseCreator.addToMsg(unExcepted.getMessage());
-            }
-        } else
+        locker.lock();
+        try {
+            ServerStudyGroup sg = studyGroups.stream().
+                    filter(x -> x.getUsername().equals(username)).findFirst().orElse(null);
+
+            removeById(sg.getId(), username);
+            owners.get(username).remove(sg.getId());
+        } catch (Exception e) {
             responseCreator.addToMsg("There is no any your element");
+        } finally {
+            locker.unlock();
+        }
     }
 
     /**
@@ -97,67 +98,65 @@ public final class CollectionManagerImpl implements CollectionManager {
     @Override
     public void removeGreater(ServerStudyGroup studyGroup, String username) {
         int cnt = 0;
+
+        locker.lock();
+
         for (ServerStudyGroup st : studyGroups) {
             if (isOwner(st.getId(), username)) {
                 if (st.getStudentsCount() > studyGroup.getStudentsCount()) {
                     try {
                         removeById(st.getId(), username);
+                        owners.get(username).remove(st.getId());
                         cnt++;
-                    } catch (NotOwnerException e) {
-                        e.printStackTrace();
+                    } catch (NotOwnerException unexpected) {
+                        unexpected.printStackTrace();
                     }
                 }
             }
         }
+
+        locker.unlock();
         responseCreator.addToMsg(cnt + " elements removed at all");
     }
 
     /**
      * Метод, отвечающий за удаление элемента коллекции по id
      *
-     * @param id
+     * @param id - искомый  индентификатор
      */
     @Override
     public void removeById(long id, String username) throws NotOwnerException {
-        if (isOwner(id, username)) {
-            if (dataBase.deleteStudyGroupById(id)) {
-                responseCreator.addToMsg("Element " + id + " is successfully removed from collection");
-                studyGroups = studyGroups.stream()
-                        .filter(studyGroup -> studyGroup.getId() != id)
-                        .collect(Collectors.toCollection(LinkedList::new));
-            } else
-                responseCreator.addToMsg("Id is not found");
-        } else
+        if (!isOwner(id, username))
             throw new NotOwnerException();
-    }
 
-    /**
-     * Считает, сколько сколько групп учится в семестрах, ниже заданного
-     *
-     * @param semester
-     */
-    @Override
-    public void countLessThanSemesterEnum(Semester semester) {
-        int count = (int) studyGroups.stream()
-                .filter(studyGroup -> studyGroup.getSemesterEnum().getValue() > semester.getValue())
-                .count();
-        responseCreator.addToMsg("Count of elements is: " + count);
+        locker.lock();
+
+        if (!dataBase.deleteStudyGroupById(id)) {
+            responseCreator.addToMsg("Id is not found");
+            return;
+        }
+
+        responseCreator.addToMsg("Element with id " + id + " is successfully removed from collection");
+        studyGroups = studyGroups.stream()
+                .filter(studyGroup -> studyGroup.getId() != id)
+                .collect(Collectors.toCollection(LinkedList::new));
+        owners.get(username).remove(id);
+        locker.unlock();
     }
 
     /**
      * Метод, отвечающий за добавление элемента в коллекцию
-     *
-     * @param studyGroup
      */
     @Override
-    public void addElement(ServerStudyGroup studyGroup) {
+    public void addElement(ServerStudyGroup studyGroup) throws InsertException {
         try {
             locker.lock();
             dataBase.insertStudyGroup(studyGroup);
             studyGroups.add(studyGroup);
             newUser(studyGroup.getUsername());
+            owners.get(studyGroup.getUsername()).add(studyGroup.getId());
         } catch (Exception e) {
-            responseCreator.addToMsg(e.getMessage());
+            throw new InsertException("Не удалось добавить элемент: " + e.getMessage());
         } finally {
             locker.unlock();
         }
@@ -169,30 +168,30 @@ public final class CollectionManagerImpl implements CollectionManager {
      */
     @Override
     public void update(long id, ServerStudyGroup studyGroup) {
-        for (ServerStudyGroup sg : studyGroups) {
-            if (sg.getId() == id) {
-                if (isOwner(id, studyGroup.getUsername())) {
-                    try {
-                        locker.lock();
-                        dataBase.updateStudyGroup(id, studyGroup);
-                        sg.setName(studyGroup.getName());
-                        sg.setCoordinates(studyGroup.getCoordinates());
-                        sg.setFormOfEducation(studyGroup.getFormOfEducation());
-                        sg.setGroupAdmin(studyGroup.getGroupAdmin());
-                        sg.setStudentsCount(studyGroup.getStudentsCount());
-                        sg.setSemesterEnum(studyGroup.getSemesterEnum());
-                        responseCreator.addToMsg("Element is updated!");
-                        return;
-                    } catch (SQLNoDataException e) {
-                        responseCreator.addToMsg("Invalid field");
-                    } finally {
-                        locker.lock();
-                    }
-                }
-            }
-            break;
+        ServerStudyGroup sg =
+                studyGroups.stream().filter(x -> x.getId() == id && isOwner(id, x.getUsername())).
+                        findFirst().orElse(null);
+
+        if (sg == null) {
+            responseCreator.addToMsg("Input id is not found!");
+            return;
         }
-        responseCreator.addToMsg("Input id is not found!");
+
+        try {
+            locker.lock();
+            dataBase.updateStudyGroup(id, studyGroup);
+            sg.setName(studyGroup.getName());
+            sg.setCoordinates(studyGroup.getCoordinates());
+            sg.setFormOfEducation(studyGroup.getFormOfEducation());
+            sg.setGroupAdmin(studyGroup.getGroupAdmin());
+            sg.setStudentsCount(studyGroup.getStudentsCount());
+            sg.setSemesterEnum(studyGroup.getSemesterEnum());
+            responseCreator.addToMsg("Element is updated!");
+        } catch (SQLNoDataException e) {
+            responseCreator.addToMsg("Invalid field");
+        } finally {
+            locker.unlock();
+        }
     }
 
     /**
@@ -200,26 +199,16 @@ public final class CollectionManagerImpl implements CollectionManager {
      */
     @Override
     public void info() {
-        String info = "Время инциализации коллекции: " + getInitializationTime() + "\n" +
+        String info = "Время инциализации коллекции: " + creationDate + "\n" +
                 "Количество элементов в коллекции: " + studyGroups.size() + "\n" +
                 "Тип коллекции: " + studyGroups.getClass().getSimpleName();
         responseCreator.addToMsg(info);
     }
 
     /**
-     * Метод возвращающий дату создания обьекта.
-     *
-     * @return дата создания обькта.
-     */
-    @Override
-    public ZonedDateTime getInitializationTime() {
-        return creationDate;
-    }
-
-    /**
      * Проверяет, есть ли элемент с данным id
      *
-     * @param id
+     * @param id - искомый
      * @return true - если элемент с данным id существует
      */
     @Override
@@ -227,17 +216,13 @@ public final class CollectionManagerImpl implements CollectionManager {
         return studyGroups.stream().anyMatch(x -> x.getId() == id);
     }
 
-    @Override
-    public ResponseCreator getResponseCreator() {
-        return responseCreator;
-    }
 
     /**
      * @return получить коллекцию, отсортированную по полю id
      */
     @Override
-    public LinkedList<ServerStudyGroup> getStudyGroups() {
-        sort();
+    public LinkedList<ServerStudyGroup> getStudyGroupsSortedById() {
+        sortById();
         return studyGroups;
     }
 
@@ -251,6 +236,16 @@ public final class CollectionManagerImpl implements CollectionManager {
     }
 
     /**
+     * @param username - пользователь, чьи id будут получены
+     * @return получить множество id, принадлежащих username
+     */
+    @Override
+    public HashSet<Long> getIds(String username) {
+        newUser(username);
+        return owners.get(username);
+    }
+
+    /**
      * Получить экземпляр ServerStudyGroup, получив id с базы данных
      *
      * @param studyGroup "сырой" studyGroup
@@ -258,19 +253,22 @@ public final class CollectionManagerImpl implements CollectionManager {
      */
     @Override
     public ServerStudyGroup getServerStudyGroup(StudyGroup studyGroup) {
+        locker.lock();
         try {
             return new ServerStudyGroup(studyGroup, dataBase.getNextId());
         } catch (SQLNoDataException e) {
-            e.printStackTrace();
+            IO.errPrint(e.getMessage());
+            return null;
+        } finally {
+            locker.unlock();
         }
-        return null;
     }
 
     /**
      * Метод, обеспечивающий сортировку коллекции
      * использует компаратор по полю id
      */
-    private void sort() {
+    private void sortById() {
         studyGroups = studyGroups.stream()
                 .sorted(getComparatorById())
                 .collect(Collectors.toCollection(LinkedList::new));
@@ -292,7 +290,7 @@ public final class CollectionManagerImpl implements CollectionManager {
      * @return компаратор
      */
     private Comparator<ServerStudyGroup> getComparatorById() {
-        return (ServerStudyGroup a, ServerStudyGroup b) -> (int) (a.getId() - b.getId());
+        return Comparator.comparing(ServerStudyGroup::getId);
     }
 
     /**
@@ -305,28 +303,21 @@ public final class CollectionManagerImpl implements CollectionManager {
     }
 
     private void initOwners() {
-        try {
-            CopyOnWriteArrayList<ServerStudyGroup> arrayList = dataBase.getAll();
-            for (ServerStudyGroup s : arrayList) {
-                if (owners.get(s.getUsername()) == null)
-                    newUser(s.getUsername());
-                owners.get(s.getUsername()).add((int) s.getId());
-            }
-        } catch (SQLNoDataException e) {
-            e.printStackTrace();
+        for (ServerStudyGroup s : studyGroups) {
+            if (!owners.containsKey(s.getUsername()))
+                newUser(s.getUsername());
+            owners.get(s.getUsername()).add(s.getId());
         }
     }
 
     private void newUser(String username) {
-        //
         locker.lock();
         if (!owners.containsKey(username))
             owners.put(username, new HashSet<>());
-        //
         locker.unlock();
     }
 
     private boolean isOwner(long id, String username) {
-        return owners.containsKey(username) && owners.get(username).contains((int) id);
+        return owners.containsKey(username) && owners.get(username).contains(id);
     }
 }

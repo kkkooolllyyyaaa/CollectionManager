@@ -18,7 +18,7 @@ public class ShowFullCommand extends AbstractCommand {
 
     @Override
     public void execute(String[] args) {
-        StringBuilder sb = new StringBuilder("Элементов в коллекции: " + collectionManager.getStudyGroups().size()).append("\n");
+        StringBuilder sb = new StringBuilder("Элементов в коллекции: " + collectionManager.getStudyGroupsSortedById().size()).append("\n");
         for (ServerStudyGroup sg : collectionManager.getStudyGroupsSortedByUsername()) {
             sb.append(StudyGroupShower.toStrViewFull(sg));
         }

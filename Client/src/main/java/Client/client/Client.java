@@ -18,6 +18,7 @@ import java.nio.BufferOverflowException;
 import java.nio.channels.SocketChannel;
 import java.util.NoSuchElementException;
 
+import static general.IO.errPrint;
 import static general.IO.getReader;
 
 
@@ -115,7 +116,10 @@ public class Client implements ClientApp {
         try {
             response = responseReader.readResponse(socketChannel);
         } catch (BufferOverflowException e) {
-            System.out.println("Server data is too big for buffer");
+            errPrint("Server data is too big for buffer");
+        } catch (StreamCorruptedException e) {
+            errPrint("Server is unavailable now");
+            exit();
         }
         connectionManager.closeConnection();
         if (response == null) {

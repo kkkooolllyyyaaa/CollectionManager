@@ -13,17 +13,17 @@ public enum Semester implements Serializable {
     private static final long serialVersionUID = -6358L;
 
     private final int value;
-    private final String url;
+    private final String str;
 
-    Semester(String url, int value) {
+    Semester(String str, int value) {
         this.value = value;
-        this.url = url;
+        this.str = str;
     }
 
     public static void printValues() {
         System.out.println("List of SEMESTER enum values:");
         for (Semester semester : Semester.values()) {
-            System.out.println(semester.getUrl());
+            System.out.println(semester.getStr());
         }
     }
 }

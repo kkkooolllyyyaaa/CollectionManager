@@ -11,16 +11,16 @@ public enum FormOfEducation implements Serializable {
     EVENING_CLASSES("EVENING_CLASSES");
     private static final long serialVersionUID = 25236L;
 
-    private final String url;
+    private final String str;
 
-    FormOfEducation(String url) {
-        this.url = url;
+    FormOfEducation(String str) {
+        this.str = str;
     }
 
     public static void printValues() {
         System.out.println("List of FormOfEducation enum values:");
         for (FormOfEducation fOE : FormOfEducation.values()) {
-            System.out.println(fOE.getUrl());
+            System.out.println(fOE.getStr());
         }
     }
 }

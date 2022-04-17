@@ -116,7 +116,7 @@ public class Server implements ServerApp {
      * Добавляет все команды для работы с коллекцией
      */
     private void addCommands() {
-        commandReader.addCommand("add", new AddCommand(collectionManager));
+        commandReader.addCommand("add", new AddCommand(collectionManager, responseCreator));
         commandReader.addCommand("clear", new ClearCommand(collectionManager));
         commandReader.addCommand("history", new HistoryCommand(commandReader, responseCreator));
         commandReader.addCommand("info", new InfoCommand(collectionManager));
@@ -130,6 +130,7 @@ public class Server implements ServerApp {
         commandReader.addCommand("sum_of_students_count", new SumOfStudentsCountCommand(collectionManager));
         commandReader.addCommand("update", new UpdateCommand(collectionManager, responseCreator));
         commandReader.addCommand("help", new HelpCommand(commandReader.getCommandMap(), responseCreator));
+        commandReader.addCommand("my_ids", new MyIdsCommand(collectionManager, responseCreator));
     }
 
     /**
