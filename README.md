@@ -1,4 +1,4 @@
-# Laba7 #
+# Collection Manager
 Client-Server "CRUD" application with multithreaded server, tcp communication and client auth
 
 ## Java SE: ##
